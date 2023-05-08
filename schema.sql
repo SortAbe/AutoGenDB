@@ -12,6 +12,7 @@ CREATE TABLE student(
 	ID INT NOT NULL,
 	firstName VARCHAR(20) NOT NULL,
 	lastName VARCHAR(20) NOT NULL,
+	gender BOOLEAN NOT NULL,
 	dept_name VARCHAR(20) NOT NULL,
 	credits INT,
 	PRIMARY KEY(ID),
@@ -22,6 +23,7 @@ CREATE TABLE instructor(
 	ID INT NOT NULL,
 	firstName VARCHAR(20) NOT NULL,
 	lastName VARCHAR(20) NOT NULL,
+	gender BOOLEAN NOT NULL,
 	dept_name VARCHAR(20) NOT NULL,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
