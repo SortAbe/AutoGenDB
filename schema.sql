@@ -3,28 +3,29 @@ CREATE DATABASE University;
 USE University;
 
 CREATE TABLE department(
-	dept_name VARCHAR(20) NOT NULL,
+	dept_name VARCHAR(80) NOT NULL,
+	college VARCHAR(80),
 	building INT,
 	PRIMARY KEY(dept_name)
 );
 
 CREATE TABLE student(
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	firstName VARCHAR(20) NOT NULL,
 	lastName VARCHAR(20) NOT NULL,
 	gender BOOLEAN NOT NULL,
-	dept_name VARCHAR(20) NOT NULL,
+	dept_name VARCHAR(80) NOT NULL,
 	credits INT,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
 );
 
 CREATE TABLE instructor(
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	firstName VARCHAR(20) NOT NULL,
 	lastName VARCHAR(20) NOT NULL,
 	gender BOOLEAN NOT NULL,
-	dept_name VARCHAR(20) NOT NULL,
+	dept_name VARCHAR(80) NOT NULL,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
 );
@@ -32,7 +33,7 @@ CREATE TABLE instructor(
 CREATE TABLE course(
 	course_id INT NOT NULL,
 	title VARCHAR(20),
-	dept_name VARCHAR(20) NOT NULL,
+	dept_name VARCHAR(80) NOT NULL,
 	credits INT,
 	PRIMARY KEY(course_id),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
