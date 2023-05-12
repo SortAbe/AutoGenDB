@@ -31,7 +31,7 @@ CREATE TABLE instructor(
 );
 
 CREATE TABLE course(
-	course_id INT NOT NULL,
+	course_id INT NOT NULL AUTO_INCREMENT,
 	title VARCHAR(20),
 	dept_name VARCHAR(80) NOT NULL,
 	credits INT,
