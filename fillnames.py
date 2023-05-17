@@ -101,13 +101,13 @@ class Filler:
 
 	def class_(self, year=2023, semester='Spring'):
 		self.cursor.execute('SELECT COUNT(*) FROM instructor;')
-		amount = self.cursor.fetchall() * 3
+		amount = self.cursor.fetchall()[0] * 3
 		self.cursor.execute('SELECT course.course_id, course.dept_name, department.building  FROM course JOIN department ON course.dept_name = department.dept_name ORDER BY department.building;')
 		view = self.cursor.fetchall()
 		building = None
 		room_no = 0
-		sql = 'INSERT INTO class (course_id, semester, year, building, room_no) VALUES(%s, %s, %s, %s, %s)'
-		sql2 = 'INSERT INTO classroom (building, room_no, capacity) VALUES(%s, %s, %s)'
+		sql = 'INSERT INTO class (course_id, semester, year, building, room_no) VALUES(%s, %s, %s, %s, %s);'
+		sql2 = 'INSERT INTO classroom (building, room_no, capacity) VALUES(%s, %s, %s);'
 		n = amount
 		for row in view:
 			if n < 0:
@@ -124,6 +124,23 @@ class Filler:
 				self.cursor.execute(sql2, data2)
 			n -= 1
 
+	def teaches(self):
+		self.cursor.execute('SELECT dept_name FROM department;')
+		for dept in self.cursor.fetchall():
+			self.cursor.execute('SELECT ID FROM instructor WHERE dept_name = \"' + dept[0] + '\";')
+			teachers = self.cursor.fetchall()
+			teachNums = len(teachers)
+			teachSelect = 0
+			self.cursor.execute('SELECT course_id FROM course WHERE dept_name = \"' + dept[0] + '\";')
+			for course in self.cursor.fetchall():
+				self.cursor.execute('SELECT class_id FROM class WHERE course_id = \"' + str(course[0]) + '\";')
+				for class_ in self.cursor.fetchall():
+					sql = 'INSERT INTO teaches (ID, course_id, class_id) VALUES (%s, %s, %s);'
+					data = (str(teachers[teachSelect % teachNums][0]), str(course[0]), str(class_[0])) 
+					self.cursor.execute(sql, data)
+					teachSelect += 1
+		self.cnx.commit()
+
 	def close(self):
 		self.cursor.close()
 		self.cnx.close()
@@ -133,8 +150,9 @@ if __name__ == '__main__':
 	filler = Filler()
 	#filler.fillFemales()
 	#filler.fillMales()
-	#filler.fillFemalesT()
-	#filler.fillMalesT()
-	filler.class_()
+	#filler.fillFemalesT(10000)
+	#filler.fillMalesT(10000)
+	#filler.class_()
+	filler.teaches()
 	filler.close()
 
