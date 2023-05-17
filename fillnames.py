@@ -30,15 +30,15 @@ class Filler:
 		for row in results:
 			self.departmentList.append(row[0])
 		#get names
-		with open('female.names', 'r') as femf:
+		with open('./names/female.names', 'r') as femf:
 			lines = femf.readlines()
 			for line in lines:
 				self.femaleNames.append(line)
-		with open('male.names', 'r') as malf:
+		with open('./names/male.names', 'r') as malf:
 			lines = malf.readlines()
 			for line in lines:
 				self.maleNames.append(line)
-		with open('last.names', 'r') as lasf:
+		with open('./names/last.names', 'r') as lasf:
 			lines = lasf.readlines()
 			for line in lines:
 				self.lastNames.append(line)
@@ -99,15 +99,42 @@ class Filler:
 			self.cursor.execute(sql, data)
 		self.cnx.commit()
 
+	def class_(self, year=2023, semester='Spring'):
+		self.cursor.execute('SELECT COUNT(*) FROM instructor;')
+		amount = self.cursor.fetchall() * 3
+		self.cursor.execute('SELECT course.course_id, course.dept_name, department.building  FROM course JOIN department ON course.dept_name = department.dept_name ORDER BY department.building;')
+		view = self.cursor.fetchall()
+		building = None
+		room_no = 0
+		sql = 'INSERT INTO class (course_id, semester, year, building, room_no) VALUES(%s, %s, %s, %s, %s)'
+		sql2 = 'INSERT INTO classroom (building, room_no, capacity) VALUES(%s, %s, %s)'
+		n = amount
+		for row in view:
+			if n < 0:
+				self.cnx.commit()
+				return
+			if row[2] != building:
+				room_no = 0
+				building = row[2]
+			for _ in range(random.choice(range(6))):
+				data = (row[0], semester, year, building, room_no)
+				room_no += 1
+				data2 = (building, room_no, random.choice(range(6, 11)) * 10)
+				self.cursor.execute(sql, data)
+				self.cursor.execute(sql2, data2)
+			n -= 1
+
 	def close(self):
 		self.cursor.close()
 		self.cnx.close()
 
 
-if '__NAME__' == '__NAME__':
+if __name__ == '__main__':
 	filler = Filler()
-	filler.fillFemales()
-	filler.fillMales()
-	filler.fillFemalesT()
-	filler.fillMalesT()
+	#filler.fillFemales()
+	#filler.fillMales()
+	#filler.fillFemalesT()
+	#filler.fillMalesT()
+	filler.class_()
 	filler.close()
+

@@ -50,6 +50,6 @@ INSERT INTO department(dept_name, college, building) VALUES
 ("School of Art and Art History","College of The Arts",49000),
 ("School of Music","College of The Arts",50000),
 ("School of Theatre and Dance","College of The Arts",51000),
-("Deparment of Military Studies","College of Military Studies", 52000)
-("Department of Sports and Physical Health", "College of Sports", 53000)
+("Department of Military Studies","College of Military Studies", 52000),
+("Department of Sports and Physical Health", "College of Sports", 53000),
 ("School of Policy and Law", "College of Arts and Sciences", 54000);

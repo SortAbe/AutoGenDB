@@ -32,52 +32,49 @@ CREATE TABLE instructor(
 
 CREATE TABLE course(
 	course_id INT NOT NULL AUTO_INCREMENT,
-	title VARCHAR(20),
+	title VARCHAR(80),
 	dept_name VARCHAR(80) NOT NULL,
 	credits INT,
 	PRIMARY KEY(course_id),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
 );
 
-CREATE TABLE section(
+CREATE TABLE class(
+	class_id INT NOT NULL AUTO_INCREMENT,
 	course_id INT NOT NULL,
-	sec_id INT NOT NULL,
 	semester VARCHAR(8) NOT NULL,
 	year YEAR NOT NULL,
-	building VARCHAR(3),
+	building INT,
 	room_no INT,
-	PRIMARY KEY(course_id, sec_id, semester, year),
+	PRIMARY KEY(class_id),
 	FOREIGN KEY(course_id) REFERENCES course(course_id)
 );
 
 CREATE TABLE classroom(
-	building VARCHAR(3) NOT NULL,
+	building INT NOT NULL,
 	room_no INT NOT NULL,
-	cpacity INT,
+	used INT,
+	capacity INT,
 	PRIMARY KEY(building, room_no)
 );
 
 CREATE TABLE teaches(
 	ID INT NOT NULL, 
 	course_id INT NOT NULL,
-	sec_id INT NOT NULL,
-	semester VARCHAR(8) NOT NULL,
-	year YEAR NOT NULL,
-	PRIMARY KEY(ID, course_id, sec_id, semester, year),
+	class_id INT NOT NULL,
+	PRIMARY KEY(ID, course_id, class_id),
 	FOREIGN KEY(ID) REFERENCES instructor(ID),
 	FOREIGN KEY(course_id) REFERENCES course(course_id),
-	FOREIGN KEY(course_id, sec_id, semester, year) REFERENCES section(course_id, sec_id, semester, year)
+	FOREIGN KEY(class_id) REFERENCES class(class_id)
 );
 
 CREATE TABLE takes(
 	ID INT NOT NULL,
 	course_id INT NOT NULL,
-	sec_id INT NOT NULL,
-	semester VARCHAR(8) NOT NULL,
-	year YEAR NOT NULL,
+	class_id INT NOT NULL,
 	grade VARCHAR(2),
-	PRIMARY KEY(ID, course_id, sec_id, semester, year),
+	PRIMARY KEY(ID, course_id, class_id),
 	FOREIGN KEY(ID) REFERENCES student(ID),
 	FOREIGN KEY(course_id) REFERENCES course(course_id),
-	FOREIGN KEY(course_id, sec_id, semester, year) REFERENCES section(course_id, sec_id, semester, year)
+	FOREIGN KEY(class_id) REFERENCES class(class_id)
 );
