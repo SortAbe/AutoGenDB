@@ -10,7 +10,7 @@ import mysql.connector
 
 class Filler:
 	cnx = mysql.connector.connect(
-		host='209.133.192.178',
+		host='localhost',
 		user='py',
 		password='password123!',
 		database='University',
