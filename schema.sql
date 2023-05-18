@@ -70,10 +70,10 @@ CREATE TABLE teaches(
 
 CREATE TABLE takes(
 	ID INT NOT NULL,
-	course_id INT NOT NULL,
+	course_id INT NOT NULL, 
 	class_id INT NOT NULL,
 	grade VARCHAR(2),
-	PRIMARY KEY(ID, course_id, class_id),
+	PRIMARY KEY(ID, class_id),
 	FOREIGN KEY(ID) REFERENCES student(ID),
 	FOREIGN KEY(course_id) REFERENCES course(course_id),
 	FOREIGN KEY(class_id) REFERENCES class(class_id)
