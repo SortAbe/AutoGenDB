@@ -7,12 +7,13 @@ import random
 import re
 import time
 import mysql.connector
+import os
 
 class Filler:
 	cnx = mysql.connector.connect(
-		host='localhost',
+		host=os.environ.get('server'),
 		user='py',
-		password='password123!',
+		password=os.environ.get('dbpass'),
 		database='University',
 		port=7707
 	)
@@ -30,15 +31,15 @@ class Filler:
 		for row in results:
 			self.departmentList.append(row[0])
 		#get names
-		with open('./names/female.names', 'r') as femf:
+		with open('.lists/female.names', 'r') as femf:
 			lines = femf.readlines()
 			for line in lines:
 				self.femaleNames.append(line)
-		with open('./names/male.names', 'r') as malf:
+		with open('.lists/male.names', 'r') as malf:
 			lines = malf.readlines()
 			for line in lines:
 				self.maleNames.append(line)
-		with open('./names/last.names', 'r') as lasf:
+		with open('.lists/last.names', 'r') as lasf:
 			lines = lasf.readlines()
 			for line in lines:
 				self.lastNames.append(line)

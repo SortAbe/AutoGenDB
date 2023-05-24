@@ -20,6 +20,25 @@ CREATE TABLE student(
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
 );
 
+CREATE TABLE sAddress(
+	ID INT NOT NULL,
+	stNum INT,
+	addr1 VARCHAR(100),
+	addr2 VARCHAR(100),
+	zip INT,
+	state VARCHAR(10),
+	PRIAMRY KEY(ID),
+	FOREIGN KEY(ID) REFERENCES student(ID)
+);
+
+CREATE TABLE sContact(
+	ID INT NOT NULL,
+	email varchar(50),
+	phone varchar(20),
+	PRIAMRY KEY(ID),
+	FOREIGN KEY(ID) REFERENCES student(ID)
+);
+
 CREATE TABLE instructor(
 	ID INT NOT NULL AUTO_INCREMENT,
 	firstName VARCHAR(20) NOT NULL,
@@ -28,6 +47,25 @@ CREATE TABLE instructor(
 	dept_name VARCHAR(80) NOT NULL,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
+);
+
+CREATE TABLE tAddress(
+	ID INT NOT NULL,
+	stNum INT,
+	addr1 VARCHAR(100),
+	addr2 VARCHAR(100),
+	zip INT,
+	state VARCHAR(10),
+	PRIAMRY KEY(ID),
+	FOREIGN KEY(ID) REFERENCES instructor(ID)
+);
+
+CREATE TABLE tContact(
+	ID INT NOT NULL,
+	email varchar(50),
+	phone varchar(20),
+	PRIAMRY KEY(ID),
+	FOREIGN KEY(ID) REFERENCES instructor(ID)
 );
 
 CREATE TABLE course(
