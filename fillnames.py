@@ -2,12 +2,13 @@
 #Abrahan Diaz
 #Version 0.8
 
-
 import random
 import re
 import time
 import mysql.connector
 import os
+from random_address import real_random_address as rra
+import json
 
 class Filler:
 	cnx = mysql.connector.connect(
@@ -22,6 +23,7 @@ class Filler:
 	femaleNames = []
 	maleNames = []
 	lastNames = []
+	areaCode = {}
 
 	def __init__(self):
 		#get deparments
@@ -31,18 +33,21 @@ class Filler:
 		for row in results:
 			self.departmentList.append(row[0])
 		#get names
-		with open('.lists/female.names', 'r') as femf:
+		with open('./lists/female.names', 'r') as femf:
 			lines = femf.readlines()
 			for line in lines:
 				self.femaleNames.append(line)
-		with open('.lists/male.names', 'r') as malf:
+		with open('./lists/male.names', 'r') as malf:
 			lines = malf.readlines()
 			for line in lines:
 				self.maleNames.append(line)
-		with open('.lists/last.names', 'r') as lasf:
+		with open('./lists/last.names', 'r') as lasf:
 			lines = lasf.readlines()
 			for line in lines:
 				self.lastNames.append(line)
+		with open('./lisst/areac.json', 'r') as jsonf:
+			data = file.read()
+			self.areaCode = json.loads(data)
 
 	def fillFemales(self, rows=1000):
 		flen = len(self.femaleNames)
@@ -51,59 +56,116 @@ class Filler:
 		random.shuffle(self.femaleNames)
 		random.shuffle(self.lastNames)
 		random.shuffle(self.departmentList)
-		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s)"
+		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s);"
+		sql2 = "INSERT INTO sAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s, %s);"
+		sql3 = "INSERT INTO sContact (email, phone) VALUES (%s, %s);"
+		count = 0 
 		for i in range(rows):
 			credit = random.choice(range(60))	
-			data = (self.femaleNames[i%flen].strip(), self.lastNames[i%llen].strip(), True, self.departmentList[i%dlen].strip() , credit)
+			first = self.femaleNames[i%flen].strip()
+			last = self.lastNames[i%llen].strip()
+			data = (first, last, True, self.departmentList[i%dlen].strip() , credit)
+			addr = rra()
+			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
+			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
+				( '(' + random.choise(areaCode[addr['state']]) + ') - ' + str(random.choise(range(1000,2000)))[1:] + ' - ' + str(random.choise(range(10000,20000)))[1:])
 			self.cursor.execute(sql, data)
+			self.cursor.execute(sql2, data2)
+			self.cursor.execute(sql3, data3)
+			count += 1
+			if count% 10000 = 0:
+				self.cnx.commit()
+		self.cnx.commit()
+
+	def fillMales(self, rows=1000):
+		flen = len(self.maleNames)
+		llen = len(self.lastNames)
+		dlen = len(self.departmentList)
+		random.shuffle(self.maleNames)
+		random.shuffle(self.lastNames)
+		random.shuffle(self.departmentList)
+		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s);"
+		sql2 = "INSERT INTO sAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s, %s);"
+		sql3 = "INSERT INTO sContact (email, phone) VALUES (%s, %s);"
+		count = 0 
+		for i in range(rows):
+			credit = random.choice(range(60))	
+			first = self.maleNames[i%flen].strip()
+			last = self.lastNames[i%llen].strip()
+			data = (first, last, False, self.departmentList[i%dlen].strip() , credit)
+			addr = rra()
+			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
+			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
+				( '(' + random.choise(areaCode[addr['state']]) + ') - ' + str(random.choise(range(1000,2000)))[1:] + ' - ' + str(random.choise(range(10000,20000)))[1:])
+			self.cursor.execute(sql, data)
+			self.cursor.execute(sql2, data2)
+			self.cursor.execute(sql3, data3)
+			count += 1
+			if count% 10000 = 0:
+				self.cnx.commit()
 		self.cnx.commit()
 		
-	def fillFemalesT(self, rows=100):
+	def fillFemalesT(self, rows=1000):
 		flen = len(self.femaleNames)
 		llen = len(self.lastNames)
 		dlen = len(self.departmentList)
 		random.shuffle(self.femaleNames)
 		random.shuffle(self.lastNames)
 		random.shuffle(self.departmentList)
-		sql = "INSERT INTO instructor (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s)"
+		sql = "INSERT INTO instructor (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s);"
+		sql2 = "INSERT INTO tAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s, %s);"
+		sql3 = "INSERT INTO tContact (email, phone) VALUES (%s, %s);"
+		count = 0 
 		for i in range(rows):
-			credit = random.choice(range(60))	
-			data = (self.femaleNames[i%flen].strip(), self.lastNames[i%llen].strip(), True, self.departmentList[i%dlen].strip())
+			first = self.femaleNames[i%flen].strip()
+			last = self.lastNames[i%llen].strip()
+			data = (first, last, True, self.departmentList[i%dlen].strip())
+			addr = rra()
+			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
+			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@teacher.sqlu.edu'), 
+				( '(' + random.choise(areaCode[addr['state']]) + ') - ' + str(random.choise(range(1000,2000)))[1:] + ' - ' + str(random.choise(range(10000,20000)))[1:])
 			self.cursor.execute(sql, data)
+			self.cursor.execute(sql2, data2)
+			self.cursor.execute(sql3, data3)
+			count += 1
+			if count% 10000 = 0:
+				self.cnx.commit()
 		self.cnx.commit()
 
-	def fillMales(self, rows=1000):
-		mlen = len(self.maleNames)
+	def fillMalesT(self, rows=1000):
+		flen = len(self.maleNames)
 		llen = len(self.lastNames)
 		dlen = len(self.departmentList)
 		random.shuffle(self.maleNames)
 		random.shuffle(self.lastNames)
 		random.shuffle(self.departmentList)
-		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s)"
+		sql = "INSERT INTO student (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s);"
+		sql2 = "INSERT INTO sAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s, %s);"
+		sql3 = "INSERT INTO sContact (email, phone) VALUES (%s, %s);"
+		count = 0 
 		for i in range(rows):
-			credit = random.choice(range(60))	
-			data = (self.maleNames[i%mlen].strip(), self.lastNames[i%llen].strip(), False, self.departmentList[i%dlen].strip() , credit)
+			first = self.maleNames[i%flen].strip()
+			last = self.lastNames[i%llen].strip()
+			data = (first, last, False, self.departmentList[i%dlen].strip() , credit)
+			addr = rra()
+			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
+			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
+				( '(' + random.choise(areaCode[addr['state']]) + ') - ' + str(random.choise(range(1000,2000)))[1:] + ' - ' + str(random.choise(range(10000,20000)))[1:])
 			self.cursor.execute(sql, data)
-		self.cnx.commit()
-	
-	def fillMalesT(self, rows=100):
-		mlen = len(self.maleNames)
-		llen = len(self.lastNames)
-		dlen = len(self.departmentList)
-		random.shuffle(self.maleNames)
-		random.shuffle(self.lastNames)
-		random.shuffle(self.departmentList)
-		sql = "INSERT INTO instructor (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s)"
-		for i in range(rows):
-			credit = random.choice(range(60))	
-			data = (self.maleNames[i%mlen].strip(), self.lastNames[i%llen].strip(), False, self.departmentList[i%dlen].strip())
-			self.cursor.execute(sql, data)
+			self.cursor.execute(sql2, data2)
+			self.cursor.execute(sql3, data3)
+			count += 1
+			if count% 10000 = 0:
+				self.cnx.commit()
 		self.cnx.commit()
 
 	def class_(self, year=2023, semester='Spring'):
 		self.cursor.execute('SELECT COUNT(*) FROM instructor;')
 		amount = self.cursor.fetchall()[0][0] * 3
-		self.cursor.execute('SELECT course.course_id, course.dept_name, department.building  FROM course JOIN department ON course.dept_name = department.dept_name ORDER BY department.building;')
+		self.cursor.execute(
+			'SELECT course.course_id, course.dept_name, department.building
+			 FROM course JOIN department ON course.dept_name = department.dept_name 
+			 ORDER BY department.building;')
 		view = self.cursor.fetchall()
 		building = None
 		room_no = 0
@@ -145,12 +207,14 @@ class Filler:
 	def takes(self):
 		self.cursor.execute('SELECT dept_name FROM department;')
 		for dept in self.cursor.fetchall():
-			self.cursor.execute('SELECT course.course_id, class.class_id, class.building, class.room_no FROM course JOIN class ON course.course_id = class.course_id WHERE course.dept_name LIKE \"' + dept[0]+ '\";')
+			self.cursor.execute(
+			'SELECT course.course_id, class.class_id, class.building, class.room_no 
+			 FROM course JOIN class ON course.course_id = class.course_id 
+			 WHERE course.dept_name LIKE \"' + dept[0]+ '\";')
 			classes =  self.cursor.fetchall()
 			self.cursor.execute('SELECT ID FROM student WHERE dept_name = \"' + dept[0] + '\";')
 			for student in self.cursor.fetchall():
 				sql = 'INSERT IGNORE INTO takes (ID, course_id, class_id) VALUES (%s, %s, %s);'
-				#sql2 = 'UPDATE classroom SET used =used + 1 WHERE building = %s AND room_no = %s;'
 				for _ in range(random.choice(range(6))):
 					try:
 						choice = random.choice(classes)
@@ -167,12 +231,12 @@ class Filler:
 
 if __name__ == '__main__':
 	filler = Filler()
-	#filler.fillFemales(50000)
-	#filler.fillMales(50000)
-	#filler.fillFemalesT(5000)
-	#filler.fillMalesT(5000)
-	filler.class_()
-	filler.teaches()
-	filler.takes()
+	filler.fillFemales(5000)
+	filler.fillMales(5000)
+	filler.fillFemalesT(500)
+	filler.fillMalesT(500)
+	#filler.class_()
+	#filler.teaches()
+	#filler.takes()
 	filler.close()
 

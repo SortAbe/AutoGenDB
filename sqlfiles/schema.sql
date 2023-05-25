@@ -21,18 +21,18 @@ CREATE TABLE student(
 );
 
 CREATE TABLE sAddress(
-	ID INT NOT NULL,
-	stNum INT,
+	ID INT NOT NULL AUTO_INCREMENT,
 	addr1 VARCHAR(100),
 	addr2 VARCHAR(100),
-	zip INT,
+	city VARCHAR(100),
 	state VARCHAR(10),
+	zip INT,
 	PRIAMRY KEY(ID),
 	FOREIGN KEY(ID) REFERENCES student(ID)
 );
 
 CREATE TABLE sContact(
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	email varchar(50),
 	phone varchar(20),
 	PRIAMRY KEY(ID),
@@ -50,18 +50,18 @@ CREATE TABLE instructor(
 );
 
 CREATE TABLE tAddress(
-	ID INT NOT NULL,
-	stNum INT,
+	ID INT NOT NULL AUTO_INCREMENT,
 	addr1 VARCHAR(100),
 	addr2 VARCHAR(100),
-	zip INT,
+	city VARCHAR(100),
 	state VARCHAR(10),
+	zip INT,
 	PRIAMRY KEY(ID),
 	FOREIGN KEY(ID) REFERENCES instructor(ID)
 );
 
 CREATE TABLE tContact(
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	email varchar(50),
 	phone varchar(20),
 	PRIAMRY KEY(ID),
