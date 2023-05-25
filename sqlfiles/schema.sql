@@ -27,7 +27,7 @@ CREATE TABLE sAddress(
 	city VARCHAR(100),
 	state VARCHAR(10),
 	zip INT,
-	PRIAMRY KEY(ID),
+	PRIMARY KEY(ID),
 	FOREIGN KEY(ID) REFERENCES student(ID)
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE sContact(
 	ID INT NOT NULL AUTO_INCREMENT,
 	email varchar(50),
 	phone varchar(20),
-	PRIAMRY KEY(ID),
+	PRIMARY KEY(ID),
 	FOREIGN KEY(ID) REFERENCES student(ID)
 );
 
@@ -56,7 +56,7 @@ CREATE TABLE tAddress(
 	city VARCHAR(100),
 	state VARCHAR(10),
 	zip INT,
-	PRIAMRY KEY(ID),
+	PRIMARY KEY(ID),
 	FOREIGN KEY(ID) REFERENCES instructor(ID)
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE tContact(
 	ID INT NOT NULL AUTO_INCREMENT,
 	email varchar(50),
 	phone varchar(20),
-	PRIAMRY KEY(ID),
+	PRIMARY KEY(ID),
 	FOREIGN KEY(ID) REFERENCES instructor(ID)
 );
 
