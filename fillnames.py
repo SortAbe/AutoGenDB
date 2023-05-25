@@ -70,7 +70,7 @@ class Filler:
 				addr['city'] = ''
 			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
 			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
-			( '(' + random.choice(self.areaCode[addr['state']]) + ') - ' + str(random.choice(range(1000,2000)))[1:] + ' - ' + str(random.choice(range(10000,20000)))[1:]))
+			( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 			self.cursor.execute(sql, data)
 			self.cursor.execute(sql2, data2)
 			self.cursor.execute(sql3, data3)
@@ -100,7 +100,7 @@ class Filler:
 				addr['city'] = ''
 			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
 			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
-				( '(' + random.choice(self.areaCode[addr['state']]) + ') - ' + str(random.choice(range(1000,2000)))[1:] + ' - ' + str(random.choice(range(10000,20000)))[1:]))
+				( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 			self.cursor.execute(sql, data)
 			self.cursor.execute(sql2, data2)
 			self.cursor.execute(sql3, data3)
@@ -129,7 +129,7 @@ class Filler:
 				addr['city'] = ''
 			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
 			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@teacher.sqlu.edu'), 
-				( '(' + random.choice(self.areaCode[addr['state']]) + ') - ' + str(random.choice(range(1000,2000)))[1:] + ' - ' + str(random.choice(range(10000,20000)))[1:]))
+				( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 			self.cursor.execute(sql, data)
 			self.cursor.execute(sql2, data2)
 			self.cursor.execute(sql3, data3)
@@ -158,7 +158,7 @@ class Filler:
 				addr['city'] = ''
 			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
 			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
-				( '(' + random.choice(self.areaCode[addr['state']]) + ') - ' + str(random.choice(range(1000,2000)))[1:] + ' - ' + str(random.choice(range(10000,20000)))[1:]))
+				( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 			self.cursor.execute(sql, data)
 			self.cursor.execute(sql2, data2)
 			self.cursor.execute(sql3, data3)
