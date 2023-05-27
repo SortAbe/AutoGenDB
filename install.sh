@@ -11,6 +11,8 @@ echo "what is your database password?"
 read db_password
 export db_host
 
+pip3 install random-address
+
 export db_port
 export db_user
 export db_password
@@ -19,4 +21,3 @@ cat ./sqlfiles/schema.sql ./sqlfiles/department.sql ./sqlfiles/course.sql > ./sq
 mysql -u $db_user -h $db_host -P $db_port -p < ./sqlfiles/complete.sql
 rm -f ./sqlfiles/complete.sql
 
-pip3 install random-address
