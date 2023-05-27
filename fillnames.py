@@ -45,15 +45,25 @@ class Filler:
 			lines = lasf.readlines()
 			for line in lines:
 				self.lastNames.append(line)
+		#area code file for phone numbers
 		with open('./lists/areac.json', 'r') as jsonf:
 			data = jsonf.read()
 			self.areaCode = json.loads(data)
 
-	def fillFemales(self, rows=1000):
-		flen = len(self.femaleNames)
+	def fill_student(self, rows=1000, gen='f'):
+		if gen.lower() == 'f':
+			gender = True
+			flen = len(self.femaleNames)
+			random.shuffle(self.femaleNames)
+		elif gen.lower() == 'm':
+			gender = False
+			flen = len(self.maleNames)
+			random.shuffle(self.maleNames)
+		else:
+			print("Invalid gender speficied, exiting program!")
+			exit()
 		llen = len(self.lastNames)
 		dlen = len(self.departmentList)
-		random.shuffle(self.femaleNames)
 		random.shuffle(self.lastNames)
 		random.shuffle(self.departmentList)
 		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s);"
@@ -62,9 +72,12 @@ class Filler:
 		count = 0 
 		for i in range(rows):
 			credit = random.choice(range(60))	
-			first = self.femaleNames[i%flen].strip()
+			if gender:
+				first = self.femaleNames[i%flen].strip()
+			else:
+				first = self.maleNames[i%flen].strip()
 			last = self.lastNames[i%llen].strip()
-			data = (first, last, True, self.departmentList[i%dlen].strip() , credit)
+			data = (first, last, gender, self.departmentList[i%dlen].strip() , credit)
 			addr = rra()
 			if 'city' not in addr:
 				addr['city'] = ''
@@ -78,42 +91,21 @@ class Filler:
 			if count% 10000 == 0:
 				self.cnx.commit()
 		self.cnx.commit()
-
-	def fillMales(self, rows=1000):
-		flen = len(self.maleNames)
-		llen = len(self.lastNames)
-		dlen = len(self.departmentList)
-		random.shuffle(self.maleNames)
-		random.shuffle(self.lastNames)
-		random.shuffle(self.departmentList)
-		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s);"
-		sql2 = "INSERT INTO sAddress (addr1, addr2, city, state, zip) VALUES ( %s, %s, %s, %s, %s);"
-		sql3 = "INSERT INTO sContact (email, phone) VALUES (%s, %s);"
-		count = 0 
-		for i in range(rows):
-			credit = random.choice(range(60))	
-			first = self.maleNames[i%flen].strip()
-			last = self.lastNames[i%llen].strip()
-			data = (first, last, False, self.departmentList[i%dlen].strip() , credit)
-			addr = rra()
-			if 'city' not in addr:
-				addr['city'] = ''
-			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
-			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
-				( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
-			self.cursor.execute(sql, data)
-			self.cursor.execute(sql2, data2)
-			self.cursor.execute(sql3, data3)
-			count += 1
-			if count% 10000 == 0:
-				self.cnx.commit()
-		self.cnx.commit()
 		
-	def fillFemalesT(self, rows=1000):
-		flen = len(self.femaleNames)
+	def fill_instructor(self, rows=1000, gen='f'):
+		if gen.lower() == 'f':
+			gender = True
+			flen = len(self.femaleNames)
+			random.shuffle(self.femaleNames)
+		elif gen.lower() == 'm':
+			gender = False
+			flen = len(self.maleNames)
+			random.shuffle(self.maleNames)
+		else:
+			print("Invalid gender speficied, exiting program!")
+			exit()
 		llen = len(self.lastNames)
 		dlen = len(self.departmentList)
-		random.shuffle(self.femaleNames)
 		random.shuffle(self.lastNames)
 		random.shuffle(self.departmentList)
 		sql = "INSERT INTO instructor (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s);"
@@ -121,43 +113,17 @@ class Filler:
 		sql3 = "INSERT INTO tContact (email, phone) VALUES (%s, %s);"
 		count = 0 
 		for i in range(rows):
-			first = self.femaleNames[i%flen].strip()
+			if gender:
+				first = self.femaleNames[i%flen].strip()
+			else:
+				first = self.maleNames[i%flen].strip()
 			last = self.lastNames[i%llen].strip()
-			data = (first, last, True, self.departmentList[i%dlen].strip())
+			data = (first, last, gender, self.departmentList[i%dlen].strip())
 			addr = rra()
 			if 'city' not in addr:
 				addr['city'] = ''
 			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
 			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@teacher.sqlu.edu'), 
-				( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
-			self.cursor.execute(sql, data)
-			self.cursor.execute(sql2, data2)
-			self.cursor.execute(sql3, data3)
-			count += 1
-			if count% 10000 == 0:
-				self.cnx.commit()
-		self.cnx.commit()
-
-	def fillMalesT(self, rows=1000):
-		flen = len(self.maleNames)
-		llen = len(self.lastNames)
-		dlen = len(self.departmentList)
-		random.shuffle(self.maleNames)
-		random.shuffle(self.lastNames)
-		random.shuffle(self.departmentList)
-		sql = "INSERT INTO student (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s);"
-		sql2 = "INSERT INTO sAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s);"
-		sql3 = "INSERT INTO sContact (email, phone) VALUES (%s, %s);"
-		count = 0 
-		for i in range(rows):
-			first = self.maleNames[i%flen].strip()
-			last = self.lastNames[i%llen].strip()
-			data = (first, last, False, self.departmentList[i%dlen].strip())
-			addr = rra()
-			if 'city' not in addr:
-				addr['city'] = ''
-			data2 = (addr['address1'], addr['address2'], addr['city'], addr['state'], addr['postalCode'])
-			data3 = ((first.lower() + last.lower() + addr['postalCode'] + '@sqlu.edu'), 
 				( '(' + random.choice(self.areaCode[addr['state']]) + ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 			self.cursor.execute(sql, data)
 			self.cursor.execute(sql2, data2)
@@ -251,10 +217,8 @@ class Filler:
 
 if __name__ == '__main__':
 	filler = Filler()
-	#filler.fillFemales(5000)
-	#filler.fillMales(5000)
-	#filler.fillFemalesT(5000)
-	#filler.fillMalesT(5000)
+	#filler.fill_student()
+	#filler.fill_instructor()
 	#filler.class_()
 	#filler.teaches()
 	#filler.takes()
