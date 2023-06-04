@@ -17,7 +17,13 @@ export db_port
 export db_user
 export db_password
 
-cat ./sqlfiles/schema.sql ./sqlfiles/department.sql ./sqlfiles/course.sql > ./sqlfiles/complete.sql
+cat ./sqlfiles/schema.sql >> ./sqlfiles/complete.sql
+cat ./sqlfiles/department.sql >> ./sqlfiles/complete.sql
+cat ./sqlfiles/course.sql >> ./sqlfiles/complete.sql
+cat ./sqlfiles/females.sql >> ./sqlfiles/complete.sql
+cat ./sqlfiles/males.sql >> ./sqlfiles/complete.sql
+cat ./sqlfiles/last.sql >> ./sqlfiles/complete.sql
+
 mysql -u $db_user -h $db_host -P $db_port -p < ./sqlfiles/complete.sql
 rm -f ./sqlfiles/complete.sql
 

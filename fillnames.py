@@ -3,10 +3,7 @@
 #Version 1.0
 
 import random
-import re
-import time
 import mysql.connector
-import os
 from random_address import real_random_address as rra
 import json
 
@@ -88,7 +85,7 @@ class Filler:
 			self.cursor.execute(sql2, data2)
 			self.cursor.execute(sql3, data3)
 			count += 1
-			if count% 10000 == 0:
+			if count% 1000 == 0:
 				self.cnx.commit()
 		self.cnx.commit()
 		

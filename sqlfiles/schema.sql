@@ -1,3 +1,4 @@
+/*The student table has had registration added, instuctor has salary added, consider normilization*/
 CREATE DATABASE University;
 
 USE University;
@@ -15,6 +16,7 @@ CREATE TABLE student(
 	lastName VARCHAR(20) NOT NULL,
 	gender BOOLEAN NOT NULL,
 	dept_name VARCHAR(80) NOT NULL,
+	registered DATE NOT NULL,
 	credits INT,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
@@ -45,6 +47,7 @@ CREATE TABLE instructor(
 	lastName VARCHAR(20) NOT NULL,
 	gender BOOLEAN NOT NULL,
 	dept_name VARCHAR(80) NOT NULL,
+	salary INT,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(dept_name) REFERENCES department(dept_name)
 );
@@ -115,4 +118,18 @@ CREATE TABLE takes(
 	FOREIGN KEY(ID) REFERENCES student(ID),
 	FOREIGN KEY(course_id) REFERENCES course(course_id),
 	FOREIGN KEY(class_id) REFERENCES class(class_id)
+);
+
+/*AUXILARY TABLES*/
+
+CREATE TABLE femaleNames(
+	name VARCHAR(100)
+);
+
+CREATE TABLE maleNames(
+	name VARCHAR(100)
+);
+
+CREATE TABLE lastNames(
+	name VARCHAR(100)
 );
