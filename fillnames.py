@@ -6,6 +6,8 @@ import random
 import mysql.connector
 from random_address import real_random_address as rra
 import json
+import datetime
+import os
 
 class Filler:
 	cnx = mysql.connector.connect(
@@ -62,19 +64,21 @@ class Filler:
 		llen = len(self.lastNames)
 		dlen = len(self.departmentList)
 		random.shuffle(self.lastNames)
+		key_date = datetime.date(2015, 1, 1)
 		random.shuffle(self.departmentList)
-		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, credits) VALUES (%s, %s, %s, %s, %s);"
+		sql = "INSERT INTO student (firstName, lastName, gender, dept_name, registered, credits) VALUES (%s, %s, %s, %s, %s, %s);"
 		sql2 = "INSERT INTO sAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s);"
 		sql3 = "INSERT INTO sContact (email, phone) VALUES (%s, %s);"
 		count = 0 
 		for i in range(rows):
 			credit = random.choice(range(60))	
+			date_delta = key_date + datetime.timedelta(days=random.choice(range(3600)))
 			if gender:
 				first = self.femaleNames[i%flen].strip()
 			else:
 				first = self.maleNames[i%flen].strip()
 			last = self.lastNames[i%llen].strip()
-			data = (first, last, gender, self.departmentList[i%dlen].strip() , credit)
+			data = (first, last, gender, self.departmentList[i%dlen].strip(), date_delta.strftime('%Y-%m-%d'), credit)
 			addr = rra()
 			if 'city' not in addr:
 				addr['city'] = ''
@@ -105,7 +109,7 @@ class Filler:
 		dlen = len(self.departmentList)
 		random.shuffle(self.lastNames)
 		random.shuffle(self.departmentList)
-		sql = "INSERT INTO instructor (firstName, lastName, gender, dept_name) VALUES (%s, %s, %s, %s);"
+		sql = "INSERT INTO instructor (firstName, lastName, gender, dept_name, salary) VALUES (%s, %s, %s, %s, %s);"
 		sql2 = "INSERT INTO tAddress (addr1, addr2, city, state, zip) VALUES (%s, %s, %s, %s, %s);"
 		sql3 = "INSERT INTO tContact (email, phone) VALUES (%s, %s);"
 		count = 0 
@@ -115,7 +119,8 @@ class Filler:
 			else:
 				first = self.maleNames[i%flen].strip()
 			last = self.lastNames[i%llen].strip()
-			data = (first, last, gender, self.departmentList[i%dlen].strip())
+			salary = randm.choice(range(80_000,160_000))
+			data = (first, last, gender, self.departmentList[i%dlen].strip(), salary)
 			addr = rra()
 			if 'city' not in addr:
 				addr['city'] = ''
@@ -214,7 +219,7 @@ class Filler:
 
 if __name__ == '__main__':
 	filler = Filler()
-	#filler.fill_student()
+	filler.fill_student()
 	#filler.fill_instructor()
 	#filler.class_()
 	#filler.teaches()
