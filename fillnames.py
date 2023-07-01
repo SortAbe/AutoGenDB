@@ -10,6 +10,7 @@ import datetime
 import os
 
 class Filler:
+
 	cnx = mysql.connector.connect(
 		host=os.environ.get('server'),
 		user='py',
@@ -119,7 +120,7 @@ class Filler:
 			else:
 				first = self.maleNames[i%flen].strip()
 			last = self.lastNames[i%llen].strip()
-			salary = randm.choice(range(80_000,160_000))
+			salary = random.choice(range(80_000,160_000))
 			data = (first, last, gender, self.departmentList[i%dlen].strip(), salary)
 			addr = rra()
 			if 'city' not in addr:
