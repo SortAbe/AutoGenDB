@@ -7,6 +7,7 @@ import mysql.connector
 from random_address import real_random_address as rra
 import json
 import datetime
+import time
 import os
 
 class Filler:
@@ -219,11 +220,13 @@ class Filler:
 
 
 if __name__ == '__main__':
-	filler = Filler()
-	filler.fill_student()
-	#filler.fill_instructor()
-	#filler.class_()
-	#filler.teaches()
-	#filler.takes()
-	filler.close()
+    filler = Filler()
+    start = time.time()
+    while time.time() - start < 3600 * 12:
+        filler.fill_student()
+        filler.fill_instructor()
+        filler.class_()
+        filler.teaches()
+        filler.takes()
+        filler.close()
 
