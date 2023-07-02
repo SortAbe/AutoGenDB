@@ -226,7 +226,7 @@ if __name__ == '__main__':
         filler.fill_student()
         filler.fill_instructor()
         filler.class_()
-        filler.teaches()
-        filler.takes()
-        filler.close()
+    filler.teaches()
+    filler.takes()
+    filler.close()
 
