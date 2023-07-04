@@ -11,7 +11,7 @@ CREATE TABLE department(
 );
 
 CREATE TABLE student(
-	ID INT NOT NULL AUTO_INCREMENT,
+	ID INT NOT NULL,
 	firstName VARCHAR(20) NOT NULL,
 	lastName VARCHAR(20) NOT NULL,
 	gender BOOLEAN NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE student(
 );
 
 CREATE TABLE sAddress(
-	ID INT NOT NULL AUTO_INCREMENT,
+	ID INT NOT NULL,
 	addr1 VARCHAR(100),
 	addr2 VARCHAR(100),
 	city VARCHAR(100),
@@ -34,7 +34,7 @@ CREATE TABLE sAddress(
 );
 
 CREATE TABLE sContact(
-	ID INT NOT NULL AUTO_INCREMENT,
+	ID INT NOT NULL,
 	email varchar(50),
 	phone varchar(20),
 	PRIMARY KEY(ID),
@@ -42,7 +42,7 @@ CREATE TABLE sContact(
 );
 
 CREATE TABLE instructor(
-	ID INT NOT NULL AUTO_INCREMENT,
+	ID INT NOT NULL,
 	firstName VARCHAR(20) NOT NULL,
 	lastName VARCHAR(20) NOT NULL,
 	gender BOOLEAN NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE instructor(
 );
 
 CREATE TABLE tAddress(
-	ID INT NOT NULL AUTO_INCREMENT,
+	ID INT NOT NULL,
 	addr1 VARCHAR(100),
 	addr2 VARCHAR(100),
 	city VARCHAR(100),
@@ -64,7 +64,7 @@ CREATE TABLE tAddress(
 );
 
 CREATE TABLE tContact(
-	ID INT NOT NULL AUTO_INCREMENT,
+	ID INT NOT NULL,
 	email varchar(50),
 	phone varchar(20),
 	PRIMARY KEY(ID),
@@ -81,7 +81,7 @@ CREATE TABLE course(
 );
 
 CREATE TABLE class(
-	class_id INT NOT NULL AUTO_INCREMENT,
+	class_id INT NOT NULL,
 	course_id INT NOT NULL,
 	semester VARCHAR(8) NOT NULL,
 	year YEAR NOT NULL,
