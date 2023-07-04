@@ -194,7 +194,7 @@ class Filler:
 					return
 
 	def teaches(self, offset):
-		self.cursor.execute('SELECT dept_name FROM department LIMIT 1 OFFSET '+ offset +';')
+		self.cursor.execute('SELECT dept_name FROM department LIMIT 1 OFFSET ' + str(offset) + ';')
 		for dept in self.cursor.fetchall():
 			self.cursor.execute('SELECT ID FROM instructor WHERE dept_name = \"' + dept[0] + '\";')
 			teachers = self.cursor.fetchall()
@@ -217,7 +217,7 @@ class Filler:
 		self.cnx.commit()
 
 	def takes(self, offset):
-		self.cursor.execute('SELECT dept_name FROM department LIMIT 1 OFFSET '+ offset +';')
+		self.cursor.execute('SELECT dept_name FROM department LIMIT 1 OFFSET ' + str(offset) + ';')
 		count = 0
 		for dept in self.cursor.fetchall():
 			self.cursor.execute(
@@ -252,23 +252,25 @@ class Filler:
 if __name__ == '__main__':
 	filler = Filler()
 	id = int(sys.argv[1])
+	even = False
+	gender = True
 	if id % 2 == 0:
+		gender = False
 		even = True
 	thrOffset = int(sys.argv[2])
 	start = time.time()
-	gender = True
 	time.sleep(random.randint(0, 60))
 	if even:
 		while time.time() - start < 3600 * 2:
 			filler.fill_student(id * 100_000, gender)
-			filler.fill_instructor(id * 10_00)
+			filler.fill_instructor(id * 10_000)
 			filler.class_(id * 30_000)
 			id += thrOffset
 			gender = not gender
 	else:
 		while time.time() - start < 3600 * 2:
-			filler.fill_instructor(id * 10_00)
 			filler.class_(id * 30_000)
+			filler.fill_instructor(id * 10_000)
 			filler.fill_student(id * 100_000, gender)
 			id += thrOffset
 			gender = not gender
