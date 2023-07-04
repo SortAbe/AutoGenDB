@@ -1,6 +1,6 @@
 #!/bin/env python3
 #Abrahan Diaz
-#Version 1.0
+#Version 1.1 Staging version
 
 import random
 import mysql.connector
@@ -102,7 +102,6 @@ class Filler:
 			self.cursor.execute(sql3, data3)
 			count += 1
 			if count% 1000 == 0:
-				print(count)
 				self.cnx.commit()
 			if count == 100_000 + offset:
 				return
@@ -171,7 +170,7 @@ class Filler:
 		room_no = 0
 
 		sql = 'INSERT INTO class (class_id, course_id, semester, year, building, room_no) \
-			VALUES(%s, %s, %s, %s, %s);'
+			VALUES(%s, %s, %s, %s, %s, %s);'
 
 		sql2 = 'INSERT IGNORE INTO classroom \
 			(building, room_no, capacity) VALUES(%s, %s, %s);'
@@ -182,7 +181,7 @@ class Filler:
 				room_no = 0
 				building = row[2]
 			for _ in range(random.choice(range(6))):
-				data = (row[0], semester, year, building, room_no)
+				data = (count, row[0], semester, year, building, room_no)
 				room_no += 1
 				data2 = (building, room_no, random.choice(range(6, 11)) * 10)
 				self.cursor.execute(sql, data)
@@ -194,8 +193,8 @@ class Filler:
 					self.cnx.commit()
 					return
 
-	def teaches(self):
-		self.cursor.execute('SELECT dept_name FROM department;')
+	def teaches(self, offset):
+		self.cursor.execute('SELECT dept_name FROM department LIMIT 1 OFFSET '+ offset +';')
 		for dept in self.cursor.fetchall():
 			self.cursor.execute('SELECT ID FROM instructor WHERE dept_name = \"' + dept[0] + '\";')
 			teachers = self.cursor.fetchall()
@@ -217,8 +216,8 @@ class Filler:
 						self.cnx.commit()
 		self.cnx.commit()
 
-	def takes(self):
-		self.cursor.execute('SELECT dept_name FROM department;')
+	def takes(self, offset):
+		self.cursor.execute('SELECT dept_name FROM department LIMIT 1 OFFSET '+ offset +';')
 		count = 0
 		for dept in self.cursor.fetchall():
 			self.cursor.execute(
@@ -241,7 +240,7 @@ class Filler:
 					count += 1
 					if count % 1000 == 0:
 						self.cnx.commit()
-					if count == 100_000:
+					if count == 30_000:
 						return
 			self.cnx.commit()
 
@@ -253,16 +252,27 @@ class Filler:
 if __name__ == '__main__':
 	filler = Filler()
 	id = int(sys.argv[1])
+	if id % 2 == 0:
+		even = True
 	thrOffset = int(sys.argv[2])
 	start = time.time()
 	gender = True
 	time.sleep(random.randint(0, 60))
-	while time.time() - start < 3600 * 2:
-		filler.fill_student(id * 100_000, gender)
-		filler.fill_instructor(id * 10_00)
-		filler.class_(id * 30_000)
-		id += thrOffset
-		gender = not gender
-	filler.teaches()
-	filler.takes()
+	if even:
+		while time.time() - start < 3600 * 2:
+			filler.fill_student(id * 100_000, gender)
+			filler.fill_instructor(id * 10_00)
+			filler.class_(id * 30_000)
+			id += thrOffset
+			gender = not gender
+	else:
+		while time.time() - start < 3600 * 2:
+			filler.fill_instructor(id * 10_00)
+			filler.class_(id * 30_000)
+			filler.fill_student(id * 100_000, gender)
+			id += thrOffset
+			gender = not gender
+	if id < 54:
+		filler.teaches(id)
+		filler.takes(id)
 	filler.close()
