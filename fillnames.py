@@ -9,7 +9,7 @@ import json
 import datetime
 import time
 import os
-import threading
+import sys
 
 class Filler:
 
@@ -52,7 +52,7 @@ class Filler:
 			data = jsonf.read()
 			self.areaCode = json.loads(data)
 
-	def fill_student(self, offset, rows=100_000, gen=True):
+	def fill_student(self, offset, gen=True, rows=100_000):
 		gender = gen
 		if gen:
 			flen = len(self.femaleNames)
@@ -102,6 +102,7 @@ class Filler:
 			self.cursor.execute(sql3, data3)
 			count += 1
 			if count% 1000 == 0:
+				print(count)
 				self.cnx.commit()
 			if count == 100_000 + offset:
 				return
@@ -127,7 +128,7 @@ class Filler:
 		sql2 = "INSERT INTO tAddress (ID, addr1, addr2, city, state, zip) \
 			VALUES (%s, %s, %s, %s, %s, %s);"
 
-		sql3 = "INSERT INTO tContact (ID, email, phone) VALUES (%s, %s);"
+		sql3 = "INSERT INTO tContact (ID, email, phone) VALUES (%s, %s, %s);"
 
 		count = 0 + offset
 		for i in range(rows):
@@ -244,33 +245,24 @@ class Filler:
 						return
 			self.cnx.commit()
 
-
 	def close(self):
 		self.cursor.close()
 		self.cnx.close()
 
 
-	def run(self, id):
-		start = time.time()
-		gender = True
-		while time.time() - start < 3600 * 12:
-			self.fill_student(id * 100_000, gender)
-			self.fill_instructor(id * 10_00)
-			self.class_(id * 30_000)
-			id += 10
-			gender = not gender
-		self.teaches()
-		self.takes()
-		self.close()
-
-
 if __name__ == '__main__':
 	filler = Filler()
-	threads = []
-	for i in range(10):
-		thread = threading.Thread(target=filler.run, args=(i,))
-		threads.append(thread)
-	for j in range(10):
-		threads[j].start()
-	for x in range(10):
-		threads[j].join()
+	id = int(sys.argv[1])
+	thrOffset = int(sys.argv[2])
+	start = time.time()
+	gender = True
+	time.sleep(random.randint(0, 60))
+	while time.time() - start < 3600 * 2:
+		filler.fill_student(id * 100_000, gender)
+		filler.fill_instructor(id * 10_00)
+		filler.class_(id * 30_000)
+		id += thrOffset
+		gender = not gender
+	filler.teaches()
+	filler.takes()
+	filler.close()
