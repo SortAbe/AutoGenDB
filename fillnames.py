@@ -14,11 +14,11 @@ import sys
 class Filler:
 
 	cnx = mysql.connector.connect(
-		host=os.environ.get('server'),
+		host=os.environ.get('db_host'),
 		user='py',
-		password=os.environ.get('dbpass'),
+		password=os.environ.get('db_password'),
 		database='University',
-		port=7707
+		port=os.environ.get('db_port')
 	)
 	cursor = cnx.cursor()
 	departmentList = []
@@ -28,13 +28,11 @@ class Filler:
 	areaCode = {}
 
 	def __init__(self):
-		#get deparments
 		query = 'SELECT * FROM department'
 		self.cursor.execute(query)
 		results = self.cursor.fetchall()
 		for row in results:
 			self.departmentList.append(row[0])
-		#get names
 		with open('./lists/female.names', 'r') as femf:
 			lines = femf.readlines()
 			for line in lines:
@@ -47,7 +45,6 @@ class Filler:
 			lines = lasf.readlines()
 			for line in lines:
 				self.lastNames.append(line)
-		#area code file for phone numbers
 		with open('./lists/areac.json', 'r') as jsonf:
 			data = jsonf.read()
 			self.areaCode = json.loads(data)
@@ -185,7 +182,14 @@ class Filler:
 				room_no += 1
 				data2 = (building, room_no, random.choice(range(6, 11)) * 10)
 				self.cursor.execute(sql, data)
-				self.cursor.execute(sql2, data2)
+				fail = True
+				while fail:
+					try:
+						self.cursor.execute(sql2, data2)
+						fail = False
+					except mysql.connector.errors.DatabaseError as e:
+						time.sleep(1)
+						continue
 				count += 1
 				if count % 1000 == 0:
 					self.cnx.commit()
@@ -243,6 +247,22 @@ class Filler:
 					if count == 30_000:
 						return
 			self.cnx.commit()
+	
+	def genOffset(self):
+		self.cursor.execute('SELECT MAX(ID) FROM student;')
+		student = self.cursor.fetchone()[0] // 100_000
+		self.cursor.execute('SELECT MAX(ID) FROM instructor;')
+		instructor = self.cursor.fetchone()[0] // 10_000
+		self.cursor.execute('SELECT MAX(ID) FROM class;')
+		cla = self.cursor.fetchone()[0] // 30_000
+		if student == None or instructor == None or cla == None:
+			return 0
+		if student > instructor and student > cla:
+			return student + 1
+		if instructor > cla:
+			return instructor + 1
+		else:
+			return cla + 1
 
 	def close(self):
 		self.cursor.close()
@@ -254,12 +274,16 @@ if __name__ == '__main__':
 	id = int(sys.argv[1])
 	even = False
 	gender = True
+	taker = False
 	if id % 2 == 0:
 		gender = False
 		even = True
+	if id < 54:
+		taker = True
 	thrOffset = int(sys.argv[2])
+	id += filler.genOffset()
 	start = time.time()
-	time.sleep(random.randint(0, 60))
+	time.sleep(random.randint(0, 90))
 	if even:
 		while time.time() - start < 3600 * 2:
 			filler.fill_student(id * 100_000, gender)
@@ -274,7 +298,7 @@ if __name__ == '__main__':
 			filler.fill_student(id * 100_000, gender)
 			id += thrOffset
 			gender = not gender
-	if id < 54:
+	if taker:
 		filler.teaches(id)
 		filler.takes(id)
 	filler.close()

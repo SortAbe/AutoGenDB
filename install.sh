@@ -10,10 +10,15 @@ read db_user
 echo "what is your database password?"
 read db_password
 
-export db_host=$db_host
-export db_port=$db_port
-export db_user=$db_user
-export db_password=$db_password
+host=$db_host
+user=$db_user
+port=$db_port
+password=$db_password
+
+export host
+export user
+export port
+export password
 
 sudo apt update
 sudo apt install python3-pip
