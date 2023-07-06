@@ -3,22 +3,18 @@
 echo "Some details are needed!"
 echo "What is your database address/domain?"
 read db_host
-echo "What is your database port?"
-read db_port
 echo "What is your database user?"
 read db_user
+echo "What is your database port?"
+read db_port
 echo "what is your database password?"
 read db_password
 
-host=$db_host
-user=$db_user
-port=$db_port
-password=$db_password
-
-export host
-export user
-export port
-export password
+echo -e "export db_host=$db_host" >> ~/.bashrc
+echo -e "export db_user=$db_user" >> ~/.bashrc
+echo -e "export db_port=$db_port" >> ~/.bashrc
+echo -e "export db_password=$db_password" >> ~/.bashrc
+source ~/.bashrc
 
 sudo apt update
 sudo apt install python3-pip

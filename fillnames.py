@@ -49,6 +49,16 @@ class Filler:
 			data = jsonf.read()
 			self.areaCode = json.loads(data)
 
+	def insert(self, sql, data):
+		fail = True
+		while fail:
+			try:
+				self.cursor.execute(sql, data)
+				fail = False
+			except mysql.connector.errors.DatabaseError as e:
+				time.sleep(1)
+				continue
+					
 	def fill_student(self, offset, gen=True, rows=100_000):
 		gender = gen
 		if gen:
@@ -94,14 +104,12 @@ class Filler:
 			( '(' + random.choice(self.areaCode[addr['state']]) + ')-'\
 			+ str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 
-			self.cursor.execute(sql, data)
-			self.cursor.execute(sql2, data2)
-			self.cursor.execute(sql3, data3)
+			self.insert(sql, data)
+			self.insert(sql2, data2)
+			self.insert(sql3, data3)
 			count += 1
 			if count% 1000 == 0:
 				self.cnx.commit()
-			if count == 100_000 + offset:
-				return
 		self.cnx.commit()
 		
 	def fill_instructor(self, offset, rows=10_000, gen=True):
@@ -147,14 +155,12 @@ class Filler:
 				( '(' + random.choice(self.areaCode[addr['state']]) \
 				+ ')-' + str(random.choice(range(1000,2000)))[1:] + '-' + str(random.choice(range(10000,20000)))[1:]))
 
-			self.cursor.execute(sql, data)
-			self.cursor.execute(sql2, data2)
-			self.cursor.execute(sql3, data3)
+			self.insert(sql, data)
+			self.insert(sql2, data2)
+			self.insert(sql3, data3)
 			count += 1
 			if count% 1000 == 0:
 				self.cnx.commit()
-			if count == 10_000 + offset:
-				return
 		self.cnx.commit()
 
 	def class_(self, offset, year=2023, semester='Spring'):
@@ -181,15 +187,8 @@ class Filler:
 				data = (count, row[0], semester, year, building, room_no)
 				room_no += 1
 				data2 = (building, room_no, random.choice(range(6, 11)) * 10)
-				self.cursor.execute(sql, data)
-				fail = True
-				while fail:
-					try:
-						self.cursor.execute(sql2, data2)
-						fail = False
-					except mysql.connector.errors.DatabaseError as e:
-						time.sleep(1)
-						continue
+				self.insert(sql, data)
+				self.insert(sql2, data2)
 				count += 1
 				if count % 1000 == 0:
 					self.cnx.commit()
@@ -213,7 +212,7 @@ class Filler:
 					sql = 'INSERT IGNORE INTO teaches (ID, course_id, class_id) VALUES (%s, %s, %s);'
 
 					data = (str(teachers[teachSelect % teachNums][0]), str(course[0]), str(class_[0])) 
-					self.cursor.execute(sql, data)
+					self.insert(sql, data)
 					teachSelect += 1
 					count += 1
 					if count % 1000 == 0:
@@ -240,7 +239,7 @@ class Filler:
 					except:
 						continue
 					data = (str(student[0]), str(choice[0]), str(choice[1]))
-					self.cursor.execute(sql, data)
+					self.insert(sql, data)
 					count += 1
 					if count % 1000 == 0:
 						self.cnx.commit()
@@ -253,7 +252,7 @@ class Filler:
 		student = self.cursor.fetchone()[0] // 100_000
 		self.cursor.execute('SELECT MAX(ID) FROM instructor;')
 		instructor = self.cursor.fetchone()[0] // 10_000
-		self.cursor.execute('SELECT MAX(ID) FROM class;')
+		self.cursor.execute('SELECT MAX(class_id) FROM class;')
 		cla = self.cursor.fetchone()[0] // 30_000
 		if student == None or instructor == None or cla == None:
 			return 0
@@ -274,12 +273,10 @@ if __name__ == '__main__':
 	id = int(sys.argv[1])
 	even = False
 	gender = True
-	taker = False
+	taker = id
 	if id % 2 == 0:
 		gender = False
 		even = True
-	if id < 54:
-		taker = True
 	thrOffset = int(sys.argv[2])
 	id += filler.genOffset()
 	start = time.time()
@@ -298,7 +295,7 @@ if __name__ == '__main__':
 			filler.fill_student(id * 100_000, gender)
 			id += thrOffset
 			gender = not gender
-	if taker:
-		filler.teaches(id)
-		filler.takes(id)
+	if taker < 54:
+		filler.teaches(taker)
+		filler.takes(taker)
 	filler.close()
