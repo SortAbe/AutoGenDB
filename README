@@ -1,0 +1,2 @@
+This is a database generator that works with MySQL and MariaDB database managements systems.
+It creates a fake University and inserts arbitrary amounts of data. This is useful if you wish to run benchmark against your DBMS.

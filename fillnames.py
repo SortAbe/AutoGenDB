@@ -55,7 +55,7 @@ class Filler:
 			try:
 				self.cursor.execute(sql, data)
 				fail = False
-			except mysql.connector.errors.DatabaseError as e:
+			except mysql.connector.errors.DatabaseError:
 				time.sleep(1)
 				continue
 					
