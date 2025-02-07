@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/bin/env python3.11
 # Abrahan Diaz
 # Version 1.1 Staging version
 
@@ -16,11 +16,11 @@ from random_address import real_random_address as rra
 class Filler:
 
     cnx = mysql.connector.connect(
-        host=os.environ.get("db_host"),
+        host="209.133.192.178",
         user="py",
         password=os.environ.get("db_password"),
         database="University",
-        port=os.environ.get("db_port"),
+        port='7707',
     )
     cursor = cnx.cursor()
     department_list = []
@@ -33,6 +33,9 @@ class Filler:
         query = "SELECT * FROM department"
         self.cursor.execute(query)
         results = self.cursor.fetchall()
+        if not results:
+            print("Failed to retrieve tables!")
+            exit(1)
         for row in results:
             self.department_list.append(row[0])
         with open("./lists/female.names", "r") as femf:
