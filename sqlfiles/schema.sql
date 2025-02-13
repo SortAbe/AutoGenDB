@@ -1,4 +1,5 @@
-/*The student table has had registration added, instuctor has salary added, consider normilization*/ CREATE DATABASE University;
+/*The student table has had registration added, instuctor has salary added, consider normilization*/
+CREATE DATABASE University;
 
 USE University;
 
@@ -86,36 +87,25 @@ CREATE TABLE class (
   year YEAR NOT NULL,
   building INT,
   room_no INT,
+  capacity INT,
   PRIMARY KEY (class_id),
   FOREIGN KEY (course_id) REFERENCES course (course_id)
 );
 
-CREATE TABLE classroom (
-  building INT NOT NULL,
-  room_no INT NOT NULL,
-  used INT,
-  capacity INT,
-  PRIMARY KEY (building, room_no)
-);
-
-CREATE TABLE teaches (
-  ID INT NOT NULL,
-  course_id INT NOT NULL,
-  class_id INT NOT NULL,
-  PRIMARY KEY (ID, course_id, class_id),
-  FOREIGN KEY (ID) REFERENCES instructor (ID),
-  FOREIGN KEY (course_id) REFERENCES course (course_id),
-  FOREIGN KEY (class_id) REFERENCES class (class_id)
-);
-
 CREATE TABLE takes (
   ID INT NOT NULL,
-  course_id INT NOT NULL,
   class_id INT NOT NULL,
   grade VARCHAR(2),
   PRIMARY KEY (ID, class_id),
   FOREIGN KEY (ID) REFERENCES student (ID),
-  FOREIGN KEY (course_id) REFERENCES course (course_id),
+  FOREIGN KEY (class_id) REFERENCES class (class_id)
+);
+
+CREATE TABLE teaches (
+  ID INT NOT NULL,
+  class_id INT NOT NULL,
+  PRIMARY KEY (ID, class_id),
+  FOREIGN KEY (ID) REFERENCES instructor (ID),
   FOREIGN KEY (class_id) REFERENCES class (class_id)
 );
 
@@ -125,3 +115,10 @@ CREATE TABLE femaleNames (name VARCHAR(100));
 CREATE TABLE maleNames (name VARCHAR(100));
 
 CREATE TABLE lastNames (name VARCHAR(100));
+
+CREATE TABLE addresses (
+  addr VARCHAR(50),
+  city VARCHAR(30),
+  state VARCHAR(3),
+  zip INT
+);

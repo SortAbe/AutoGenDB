@@ -1,2 +1,7 @@
-This is a database generator that works with MySQL and MariaDB database managements systems.
-It creates a fake University and inserts arbitrary amounts of data. This is useful if you wish to run benchmark against your DBMS.
+This is a database generator that works with MySQL and MariaDB.
+
+Will generate a University database with several entity and relationship tables.
+
+Capable of generating 1G of data every 10 minutes.
+
+Version 2 constitute major revision of both the tables and the generator.

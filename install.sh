@@ -2,18 +2,18 @@
 
 echo "Some details are needed!"
 echo "What is your database address/domain?"
-read db_host
+read dbhost
 echo "What is your database user?"
-read db_user
+read dbuser
 echo "What is your database port?"
-read db_port
+read dbport
 echo "what is your database password?"
-read db_password
+read dbpassword
 
-echo -e "export db_host=$db_host" >> ~/.bashrc
-echo -e "export db_user=$db_user" >> ~/.bashrc
-echo -e "export db_port=$db_port" >> ~/.bashrc
-echo -e "export db_password=$db_password" >> ~/.bashrc
+echo -e "export db_host=$dbhost" >> ~/.bashrc
+echo -e "export db_user=$dbuser" >> ~/.bashrc
+echo -e "export db_port=$dbport" >> ~/.bashrc
+echo -e "export db_password=$dbpassword" >> ~/.bashrc
 source ~/.bashrc
 
 sudo apt update

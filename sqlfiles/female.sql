@@ -3998,5 +3998,4 @@ INSERT INTO femaleNames(name) VALUES
 ("Alayna"),
 ("Zonia"),
 ("Zenia"),
-("Yuriko")
-;
+("Yuriko");
