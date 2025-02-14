@@ -17,7 +17,7 @@ select * from student where ID like 777777;
 
 select max(ID) from student;
 
-select student.firstName, student.lastName, 
+select student.firstName, student.lastName,
 student.dept_name, course.title, class.semester, class.year
 from student
 join takes on student.ID = takes.ID

@@ -337,13 +337,13 @@ class Generator:
 
 if __name__ == '__main__':
     generator = Generator()
-    with ThreadPoolExecutor(max_workers=16) as executor:
-        for thread in range(16):
+    with ThreadPoolExecutor(max_workers=32) as executor:
+        for thread in range(32):
             executor.submit(generator.generate_students, thread, 100_000)
             executor.submit(generator.generate_teachers, thread, 10_000)
             executor.submit(generator.generate_classes, thread, 10_000)
-    print('stage one done!')
-    with ThreadPoolExecutor(max_workers=16) as executor:
-        for thread in range(16):
+    print('Stage one completed.')
+    with ThreadPoolExecutor(max_workers=32) as executor:
+        for thread in range(32):
             executor.submit(generator.generate_takes, thread, 100_000)
             executor.submit(generator.generate_teaches, thread, 10_000)
