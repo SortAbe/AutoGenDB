@@ -4,6 +4,7 @@
 
 import datetime
 import os
+import time
 import random
 from mysql.connector import pooling
 from mysql.connector import errors
@@ -17,7 +18,7 @@ class Generator:
         user='py',
         host='localhost',
         database='University',
-        password=os.environ.get('dbpass'),
+        password='xKHOxyThyC7u8f',
         port='3306',
         connect_timeout=3600,
         )
@@ -110,6 +111,9 @@ class Generator:
         sql3 = 'INSERT INTO sContact (ID, email, phone) VALUES (%s, %s, %s);'
 
         offset = thread_id * rows
+        data_batch1 = []
+        data_batch2 = []
+        data_batch3 = []
         for row in range(rows):
             credit = random.choice(range(60))
             date_delta = key_date + datetime.timedelta(
@@ -153,15 +157,30 @@ class Generator:
                     + str(random.choice(range(10000, 20000)))[1:]
                 ), #phone
             )
-            try:
-                cursor.execute(sql, data)
-                cursor.execute(sql2, data2)
-                cursor.execute(sql3, data3)
-            except errors.DatabaseError as e:
-                print(e)
-            if row % 1000 == 0:
-                connector.commit()
-        connector.commit()
+            data_batch1.append(data)
+            data_batch2.append(data2)
+            data_batch3.append(data3)
+            if row % 1000 == 0 and row != 0:
+                try:
+                    cursor.executemany(sql, data_batch1)
+                    cursor.executemany(sql2, data_batch2)
+                    cursor.executemany(sql3, data_batch3)
+                    connector.commit()
+                    data_batch1 = []
+                    data_batch2 = []
+                    data_batch3 = []
+                except errors.DatabaseError as e:
+                    print(e)
+        try:
+            cursor.executemany(sql, data_batch1)
+            cursor.executemany(sql2, data_batch2)
+            cursor.executemany(sql3, data_batch3)
+            connector.commit()
+            data_batch1 = []
+            data_batch2 = []
+            data_batch3 = []
+        except errors.DatabaseError as e:
+            print(e)
         connector.close()
 
     def generate_teachers(self, thread_id, rows=10_000):
@@ -190,6 +209,9 @@ class Generator:
         sql3 = 'INSERT INTO tContact (ID, email, phone) VALUES (%s, %s, %s);'
 
         offset = thread_id * rows
+        data_batch1 = []
+        data_batch2 = []
+        data_batch3 = []
         for row in range(rows):
             if gender:
                 first = self.female_names[row % flen].strip()
@@ -229,15 +251,30 @@ class Generator:
                     + str(random.choice(range(10000, 20000)))[1:]
                 ), #phone
             )
-            try:
-                cursor.execute(sql, data)
-                cursor.execute(sql2, data2)
-                cursor.execute(sql3, data3)
-            except errors.DatabaseError as e:
-                print(e)
-            if row % 1000 == 0:
-                connector.commit()
-        connector.commit()
+            data_batch1.append(data)
+            data_batch2.append(data2)
+            data_batch3.append(data3)
+            if row % 1000 == 0 and row != 0:
+                try:
+                    cursor.executemany(sql, data_batch1)
+                    cursor.executemany(sql2, data_batch2)
+                    cursor.executemany(sql3, data_batch3)
+                    connector.commit()
+                    data_batch1 = []
+                    data_batch2 = []
+                    data_batch3 = []
+                except errors.DatabaseError as e:
+                    print(e)
+        try:
+            cursor.executemany(sql, data_batch1)
+            cursor.executemany(sql2, data_batch2)
+            cursor.executemany(sql3, data_batch3)
+            connector.commit()
+            data_batch1 = []
+            data_batch2 = []
+            data_batch3 = []
+        except errors.DatabaseError as e:
+            print(e)
         connector.close()
 
     def generate_classes(self, thread_id, rows=10_000):
@@ -337,13 +374,17 @@ class Generator:
 
 if __name__ == '__main__':
     generator = Generator()
+    then = time.time()
     with ThreadPoolExecutor(max_workers=32) as executor:
         for thread in range(32):
-            executor.submit(generator.generate_students, thread, 100_000)
-            executor.submit(generator.generate_teachers, thread, 10_000)
-            executor.submit(generator.generate_classes, thread, 10_000)
+            executor.submit(generator.generate_students, thread, 10_000)
+            #executor.submit(generator.generate_classes, thread, 10_000)
+    print(f'student: {time.time() - then}')
     print('Stage one completed.')
+    then = time.time()
     with ThreadPoolExecutor(max_workers=32) as executor:
         for thread in range(32):
-            executor.submit(generator.generate_takes, thread, 100_000)
-            executor.submit(generator.generate_teaches, thread, 10_000)
+            executor.submit(generator.generate_teachers, thread, 10_000)
+            #executor.submit(generator.generate_takes, thread, 100_000)
+            #executor.submit(generator.generate_teaches, thread, 10_000)
+    print(f'instructor: {time.time() - then}')
