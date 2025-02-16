@@ -1,4 +1,4 @@
-INSERT INTO maleNames(name) VALUES
+INSERT INTO male_names(name) VALUES
 ("Liam"),
 ("Noah"),
 ("Oliver"),

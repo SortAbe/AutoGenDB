@@ -1,4 +1,4 @@
-INSERT INTO femaleNames(name) VALUES
+INSERT INTO female_names(name) VALUES
 ("Mary"),
 ("Patricia"),
 ("Linda"),

@@ -1,86 +1,86 @@
 /*The student table has had registration added, instuctor has salary added, consider normilization*/
-CREATE DATABASE University;
+CREATE DATABASE university;
 
-USE University;
+USE university;
 
-CREATE TABLE department (
+CREATE TABLE departments (
   dept_name VARCHAR(80) NOT NULL,
   college VARCHAR(80),
   building INT,
   PRIMARY KEY (dept_name)
 );
 
-CREATE TABLE student (
-  ID INT NOT NULL,
-  firstName VARCHAR(20) NOT NULL,
-  lastName VARCHAR(20) NOT NULL,
+CREATE TABLE students (
+  id INT NOT NULL,
+  first_name VARCHAR(20) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
   gender ENUM('Male', 'Female'),
   dept_name VARCHAR(80) NOT NULL,
   registered DATE NOT NULL,
   credits INT,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (dept_name) REFERENCES department (dept_name)
+  PRIMARY KEY (id),
+  FOREIGN KEY (dept_name) REFERENCES departments (dept_name)
 );
 
-CREATE TABLE sAddress (
-  ID INT NOT NULL,
+CREATE TABLE students_address (
+  id INT NOT NULL,
   addr1 VARCHAR(100),
   addr2 VARCHAR(100),
   city VARCHAR(100),
   state VARCHAR(10),
   zip INT,
   PRIMARY KEY (ID),
-  FOREIGN KEY (ID) REFERENCES student (ID)
+  FOREIGN KEY (ID) REFERENCES students (id)
 );
 
-CREATE TABLE sContact (
-  ID INT NOT NULL,
+CREATE TABLE students_contact (
+  id INT NOT NULL,
   email varchar(50),
   phone varchar(20),
-  PRIMARY KEY (ID),
-  FOREIGN KEY (ID) REFERENCES student (ID)
+  PRIMARY KEY (id),
+  FOREIGN KEY (id) REFERENCES students (id)
 );
 
-CREATE TABLE instructor (
-  ID INT NOT NULL,
-  firstName VARCHAR(20) NOT NULL,
-  lastName VARCHAR(20) NOT NULL,
+CREATE TABLE teachers (
+  id INT NOT NULL,
+  first_name VARCHAR(20) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
   gender ENUM('Male', 'Female'),
   dept_name VARCHAR(80) NOT NULL,
   salary INT,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (dept_name) REFERENCES department (dept_name)
+  PRIMARY KEY (id),
+  FOREIGN KEY (dept_name) REFERENCES departments (dept_name)
 );
 
-CREATE TABLE tAddress (
+CREATE TABLE teachers_address (
   ID INT NOT NULL,
   addr1 VARCHAR(100),
   addr2 VARCHAR(100),
   city VARCHAR(100),
   state VARCHAR(10),
   zip INT,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (ID) REFERENCES instructor (ID)
+  PRIMARY KEY (id),
+  FOREIGN KEY (id) REFERENCES teachers (id)
 );
 
-CREATE TABLE tContact (
-  ID INT NOT NULL,
+CREATE TABLE teachers_contact (
+  id INT NOT NULL,
   email varchar(50),
   phone varchar(20),
-  PRIMARY KEY (ID),
-  FOREIGN KEY (ID) REFERENCES instructor (ID)
+  PRIMARY KEY (id),
+  FOREIGN KEY (id) REFERENCES teachers (id)
 );
 
-CREATE TABLE course (
+CREATE TABLE courses (
   course_id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(80),
   dept_name VARCHAR(80) NOT NULL,
   credits INT,
   PRIMARY KEY (course_id),
-  FOREIGN KEY (dept_name) REFERENCES department (dept_name)
+  FOREIGN KEY (dept_name) REFERENCES departments (dept_name)
 );
 
-CREATE TABLE class (
+CREATE TABLE classes (
   class_id INT NOT NULL,
   course_id INT NOT NULL,
   semester VARCHAR(8) NOT NULL,
@@ -89,32 +89,32 @@ CREATE TABLE class (
   room_no INT,
   capacity INT,
   PRIMARY KEY (class_id),
-  FOREIGN KEY (course_id) REFERENCES course (course_id)
+  FOREIGN KEY (course_id) REFERENCES courses (course_id)
 );
 
 CREATE TABLE takes (
-  ID INT NOT NULL,
+  id INT NOT NULL,
   class_id INT NOT NULL,
   grade VARCHAR(2),
-  PRIMARY KEY (ID, class_id),
-  FOREIGN KEY (ID) REFERENCES student (ID),
-  FOREIGN KEY (class_id) REFERENCES class (class_id)
+  PRIMARY KEY (id, class_id),
+  FOREIGN KEY (id) REFERENCES students (id),
+  FOREIGN KEY (class_id) REFERENCES classes (class_id)
 );
 
 CREATE TABLE teaches (
-  ID INT NOT NULL,
+  id INT NOT NULL,
   class_id INT NOT NULL,
-  PRIMARY KEY (ID, class_id),
-  FOREIGN KEY (ID) REFERENCES instructor (ID),
-  FOREIGN KEY (class_id) REFERENCES class (class_id)
+  PRIMARY KEY (id, class_id),
+  FOREIGN KEY (id) REFERENCES teachers (id),
+  FOREIGN KEY (class_id) REFERENCES classes (class_id)
 );
 
 /*AUXILARY TABLES*/
-CREATE TABLE femaleNames (name VARCHAR(100));
+CREATE TABLE female_names (name VARCHAR(100));
 
-CREATE TABLE maleNames (name VARCHAR(100));
+CREATE TABLE male_names (name VARCHAR(100));
 
-CREATE TABLE lastNames (name VARCHAR(100));
+CREATE TABLE last_names (name VARCHAR(100));
 
 CREATE TABLE addresses (
   addr VARCHAR(50),

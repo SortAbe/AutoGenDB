@@ -1,4 +1,4 @@
-INSERT INTO lastNames(name) VALUES
+INSERT INTO last_names(name) VALUES
 ("Smith"),
 ("Johnson"),
 ("Williams"),

@@ -1,4 +1,4 @@
-INSERT INTO department(dept_name, college, building) VALUES
+INSERT INTO departments(dept_name, college, building) VALUES
 ("Department of Anthropology","College of Arts and Sciences", 1000),
 ("School of Advertising and Mass Communications","College of Arts and Sciences", 2000),
 ("Department of Cell Biology, Microbiology, and Molecular Biology","College of Arts and Sciences",3000),

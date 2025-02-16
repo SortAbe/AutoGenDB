@@ -1,4 +1,4 @@
-INSERT INTO course(title, dept_name, credits) VALUES
+INSERT INTO courses(title, dept_name, credits) VALUES
 ("The Foundation of the United States Air Force Pt 1", "Department of Military Studies", 3),
 ("The Foundations of the United States Air Force Pt 2", "Department of Military Studies", 4),
 ("Air Force ROTC Leadership Laboratory", "Department of Military Studies", 3),

@@ -5,8 +5,7 @@
 import datetime
 import time
 import random
-from mysql.connector import pooling
-from mysql.connector import errors
+from mysql.connector import pooling, errors
 from concurrent.futures import ThreadPoolExecutor
 
 class Generator:
@@ -16,7 +15,7 @@ class Generator:
         pool_size=32,
         user='py',
         host='localhost',
-        database='University',
+        database='university',
         password='xKHOxyThyC7u8f',
         port='3306',
         connect_timeout=3600,
@@ -33,7 +32,7 @@ class Generator:
         connector = self.pool.get_connection()
         cursor = connector.cursor()
 
-        cursor.execute('SELECT * FROM department')
+        cursor.execute('SELECT * FROM departments')
         results = cursor.fetchall()
         if not results:
             print('Failed to retrieve table department!')
@@ -41,7 +40,7 @@ class Generator:
         for row in results:
             self.department_list.append(row[0])
 
-        cursor.execute('SELECT * FROM course')
+        cursor.execute('SELECT * FROM courses')
         results = cursor.fetchall()
         if not results:
             print('Failed to retrieve tables course!')
@@ -57,26 +56,26 @@ class Generator:
         for row in results:
             self.address_list.append(row)
 
-        cursor.execute('SELECT * FROM femaleNames')
+        cursor.execute('SELECT * FROM female_names')
         results = cursor.fetchall()
         if not results:
-            print('Failed to retrieve table femaleNames!')
+            print('Failed to retrieve table female_names!')
             exit(1)
         for row in results:
             self.female_names.append(row[0])
 
-        cursor.execute('SELECT * FROM maleNames')
+        cursor.execute('SELECT * FROM male_names')
         results = cursor.fetchall()
         if not results:
-            print('Failed to retrieve table maleNames!')
+            print('Failed to retrieve table male_names!')
             exit(1)
         for row in results:
             self.male_names.append(row[0])
 
-        cursor.execute('SELECT * FROM lastNames')
+        cursor.execute('SELECT * FROM last_names')
         results = cursor.fetchall()
         if not results:
-            print('Failed to retrieve table lastNames!')
+            print('Failed to retrieve table last_names!')
             exit(1)
         for row in results:
             self.last_names.append(row[0])
@@ -87,14 +86,14 @@ class Generator:
         connector = self.pool.get_connection()
         cursor = connector.cursor()
 
-        sql = 'INSERT INTO student (ID, firstName, lastName, gender,\
+        sql = 'INSERT INTO students (id, first_name, last_name, gender,\
             dept_name, registered, credits)\
             VALUES (%s, %s, %s, %s, %s, %s, %s);'
 
-        sql2 = 'INSERT INTO sAddress (ID, addr1, addr2, city, state, zip)\
+        sql2 = 'INSERT INTO students_address (id, addr1, addr2, city, state, zip)\
             VALUES (%s, %s, %s, %s, %s, %s);'
 
-        sql3 = 'INSERT INTO sContact (ID, email, phone) VALUES (%s, %s, %s);'
+        sql3 = 'INSERT INTO students_contact (id, email, phone) VALUES (%s, %s, %s);'
 
         key_date = datetime.date(2015, 1, 1)
         offset = thread_id * rows
@@ -113,7 +112,7 @@ class Generator:
                 days=random.choice(range(3600))
             )
             data = (
-                row + offset, #ID
+                row + offset, #id
                 first,
                 last,
                 gender,
@@ -124,7 +123,7 @@ class Generator:
 
             addr = random.choice(self.address_list)
             data2 = (
-                row + offset, #ID
+                row + offset, #id
                 str(random.randint(0,1000)) + ' ' + addr[0], #addr1
                 random.choice(['', '#', 'Apt ', 'Appartment ']) + str(random.randint(1,1000)), #addr2
                 addr[1], #city
@@ -133,7 +132,7 @@ class Generator:
             )
 
             data3 = (
-                row + offset, #ID
+                row + offset, #id
                 (first.lower() + last.lower() + str(random.randint(1,1000)) + '@sqlu.edu'), #email
                 (
                     '('
@@ -174,14 +173,14 @@ class Generator:
         connector = self.pool.get_connection()
         cursor = connector.cursor()
 
-        sql = 'INSERT INTO instructor \
-            (ID, firstName, lastName, gender, dept_name, salary) \
+        sql = 'INSERT INTO teachers \
+            (ID, first_name, last_name, gender, dept_name, salary) \
             VALUES (%s, %s, %s, %s, %s, %s);'
 
-        sql2 = 'INSERT INTO tAddress (ID, addr1, addr2, city, state, zip) \
+        sql2 = 'INSERT INTO teachers_address (id, addr1, addr2, city, state, zip) \
             VALUES (%s, %s, %s, %s, %s, %s);'
 
-        sql3 = 'INSERT INTO tContact (ID, email, phone) VALUES (%s, %s, %s);'
+        sql3 = 'INSERT INTO teachers_contact (id, email, phone) VALUES (%s, %s, %s);'
 
         offset = thread_id * rows
         data_batch1 = []
@@ -197,7 +196,7 @@ class Generator:
 
             last = random.choice(self.last_names)
             data = (
-                row + offset, #ID
+                row + offset, #id
                 first,
                 last,
                 gender,
@@ -207,7 +206,7 @@ class Generator:
 
             addr = random.choice(self.address_list)
             data2 = (
-                    row + offset, #ID
+                    row + offset, #id
                     str(random.randint(0,1000)) + ' ' + addr[0], #addr1
                     random.choice(['', '#', 'Apt ', 'Appartment ']) + str(random.randint(1,1000)), #addr2
                     addr[1], #city
@@ -257,11 +256,11 @@ class Generator:
         connector = self.pool.get_connection()
         cursor = connector.cursor()
         cursor.execute(
-            'SELECT course.course_id, department.building\
-            FROM course JOIN department ON course.dept_name = department.dept_name;'
+            'SELECT courses.course_id, departments.building\
+            FROM courses JOIN departments ON courses.dept_name = departments.dept_name;'
         )
         results = cursor.fetchall()
-        sql = 'INSERT INTO class (class_id, course_id, semester, year, building, room_no, capacity)\
+        sql = 'INSERT INTO classes (class_id, course_id, semester, year, building, room_no, capacity)\
             VALUES(%s, %s, %s, %s, %s, %s, %s);'
 
         offset = thread_id * rows
@@ -296,11 +295,11 @@ class Generator:
     def generate_takes(self, thread_id, rows=100_000):
         connector = self.pool.get_connection()
         cursor = connector.cursor()
-        cursor.execute('SELECT MAX(ID) FROM student')
+        cursor.execute('SELECT MAX(ID) FROM students')
         student_max = cursor.fetchone()[0]
-        cursor.execute('SELECT MIN(class_id) FROM class')
+        cursor.execute('SELECT MIN(class_id) FROM classes')
         class_min = cursor.fetchone()[0]
-        cursor.execute('SELECT MAX(class_id) FROM class')
+        cursor.execute('SELECT MAX(class_id) FROM classes')
         class_max = cursor.fetchone()[0]
 
         sql = 'INSERT INTO takes(ID, class_id, grade)\
@@ -318,7 +317,7 @@ class Generator:
                     class_id = random.randint(class_min, class_max)
                 class_list.append(class_id)
                 data = (
-                    row + offset, #ID
+                    row + offset, #id
                     class_id, #class_id
                     random.choice(['A', 'B', 'C', 'D', 'F']) + random.choice(['+', '-', '']) #grade
                 )
@@ -342,11 +341,11 @@ class Generator:
     def generate_teaches(self, thread_id, rows=10_000):
         connector = self.pool.get_connection()
         cursor = connector.cursor()
-        cursor.execute('SELECT MAX(ID) FROM instructor')
+        cursor.execute('SELECT MAX(ID) FROM teachers')
         student_max = cursor.fetchone()[0]
-        cursor.execute('SELECT MIN(class_id) FROM class')
+        cursor.execute('SELECT MIN(class_id) FROM classes')
         class_min = cursor.fetchone()[0]
-        cursor.execute('SELECT MAX(class_id) FROM class')
+        cursor.execute('SELECT MAX(class_id) FROM classes')
         class_max = cursor.fetchone()[0]
 
         sql = 'INSERT INTO teaches(ID, class_id)\
