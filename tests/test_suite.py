@@ -2,9 +2,7 @@
 
 import random
 import time
-
-from mysql.connector import pooling, errors
-
+from mysql.connector import pooling
 
 class Tester:
 
@@ -18,7 +16,6 @@ class Tester:
         port='3306',
         connect_timeout=3600,
         )
-
     department_list = []
     course_list = []
     address_list = []

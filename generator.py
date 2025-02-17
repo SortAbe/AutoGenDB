@@ -27,6 +27,9 @@ class Generator:
     female_names = []
     male_names = []
     last_names = []
+    students_max: int
+    teachers_max: int
+    classes_max: int
 
     def __init__(self):
         connector = self.pool.get_connection()
@@ -80,6 +83,30 @@ class Generator:
         for row in results:
             self.last_names.append(row[0])
 
+        cursor.execute('SELECT MAX(id) FROM students')
+        result = cursor.fetchone()
+        if not result:
+            print('Failed to retrieve stuents max!')
+            exit(1)
+        else:
+            self.students_max = result[0]
+
+        cursor.execute('SELECT MAX(id) FROM teachers')
+        result = cursor.fetchone()
+        if not result:
+            print('Failed to retrieve teachers max!')
+            exit(1)
+        else:
+            self.teachers_max = result[0]
+
+        cursor.execute('SELECT MAX(class_id) FROM classes')
+        result = cursor.fetchone()
+        if not result:
+            print('Failed to retrieve classes max!')
+            exit(1)
+        else:
+            self.classes_max = result[0]
+
         connector.close()
 
     def generate_students(self, thread_id, rows=100_000):
@@ -96,7 +123,7 @@ class Generator:
         sql3 = 'INSERT INTO students_contact (id, email, phone) VALUES (%s, %s, %s);'
 
         key_date = datetime.date(2015, 1, 1)
-        offset = thread_id * rows
+        offset = thread_id * rows + self.students_max + 1
         data_batch1 = []
         data_batch2 = []
         data_batch3 = []
@@ -182,7 +209,7 @@ class Generator:
 
         sql3 = 'INSERT INTO teachers_contact (id, email, phone) VALUES (%s, %s, %s);'
 
-        offset = thread_id * rows
+        offset = thread_id * rows + self.teachers_max + 1
         data_batch1 = []
         data_batch2 = []
         data_batch3 = []
@@ -263,7 +290,7 @@ class Generator:
         sql = 'INSERT INTO classes (class_id, course_id, semester, year, building, room_no, capacity)\
             VALUES(%s, %s, %s, %s, %s, %s, %s);'
 
-        offset = thread_id * rows
+        offset = thread_id * rows + self.classes_max + 1
         data_batch = []
         for row in range(rows):
             course = random.choice(results)
@@ -295,20 +322,19 @@ class Generator:
     def generate_takes(self, thread_id, rows=100_000):
         connector = self.pool.get_connection()
         cursor = connector.cursor()
-        cursor.execute('SELECT MAX(ID) FROM students')
-        student_max = cursor.fetchone()[0]
-        cursor.execute('SELECT MIN(class_id) FROM classes')
-        class_min = cursor.fetchone()[0]
+        cursor.execute('SELECT MAX(id) FROM students')
+        students_new_max = cursor.fetchone()[0]
+        class_min = self.classes_max + 1
         cursor.execute('SELECT MAX(class_id) FROM classes')
         class_max = cursor.fetchone()[0]
 
-        sql = 'INSERT INTO takes(ID, class_id, grade)\
+        sql = 'INSERT INTO takes(id, class_id, grade)\
             VALUES(%s, %s, %s)'
 
-        offset = thread_id * rows
+        offset = thread_id * rows + self.students_max + 1
         data_batch = []
         for row in range(rows):
-            if (row + offset) > student_max:
+            if (row + offset) > students_new_max:
                 break
             class_list = []
             for _ in range(3):
@@ -341,20 +367,19 @@ class Generator:
     def generate_teaches(self, thread_id, rows=10_000):
         connector = self.pool.get_connection()
         cursor = connector.cursor()
-        cursor.execute('SELECT MAX(ID) FROM teachers')
-        student_max = cursor.fetchone()[0]
-        cursor.execute('SELECT MIN(class_id) FROM classes')
-        class_min = cursor.fetchone()[0]
+        cursor.execute('SELECT MAX(id) FROM teachers')
+        teachers_new_max = cursor.fetchone()[0]
+        class_min = self.classes_max + 1
         cursor.execute('SELECT MAX(class_id) FROM classes')
         class_max = cursor.fetchone()[0]
 
-        sql = 'INSERT INTO teaches(ID, class_id)\
+        sql = 'INSERT INTO teaches(id, class_id)\
             VALUES(%s, %s)'
 
-        offset = thread_id * rows
+        offset = thread_id * rows + self.teachers_max + 1
         data_batch = []
         for row in range(rows):
-            if (row + offset) > student_max:
+            if (row + offset) > teachers_new_max:
                 break
             data = (
                 row + offset, #ID
