@@ -1,4 +1,3 @@
-/*The student table has had registration added, instuctor has salary added, consider normilization*/
 CREATE DATABASE university;
 
 USE university;

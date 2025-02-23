@@ -33,3 +33,11 @@ and firstName like 'Abraham'
 and state in ('CA', 'TN');
 
 update student set firstName = 'Abraham' where firstName like 'Abrahan';
+
+select * from teachers where salary = (select max(salary) from teachers);
+select * from teachers where salary = (select round(avg(salary)) from teachers);
+
+select * from students where credits = (select max(credits) from students) limit 40;
+select * from students where credits = (select round(avg(credits)) from students) limit 40;
+
+select MAX(salary) from teachers;
