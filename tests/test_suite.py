@@ -24,9 +24,10 @@ student_max: int
 teacher_max: int
 classes_max: int
 
+results = {}
+
 connector = pool.get_connection()
 cursor = connector.cursor()
-
 cursor.execute('SELECT * FROM departments')
 results = cursor.fetchall()
 if not results:
@@ -98,51 +99,50 @@ if not result:
     exit(1)
 else:
     classes_max = result
-
 connector.close()
 
-def sequential_index():
+def index_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(3000):
+    for _ in range(9000):
         cursor.execute(
             f'SELECT * FROM students WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(3000):
+    for _ in range(9000):
         cursor.execute(
             f'SELECT * FROM students_contact WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(3000):
+    for _ in range(9000):
         cursor.execute(
             f'SELECT * FROM students_address WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(3000):
+    for _ in range(9000):
         cursor.execute(
             f'SELECT * FROM students JOIN students_address on students.id = students_address.id JOIN students_contact on students.id = students_contact.id WHERE students.id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(500):
+    for _ in range(1500):
         cursor.execute(
             f'SELECT * FROM teachers WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    for _ in range(500):
+    for _ in range(1500):
         cursor.execute(
             f'SELECT * FROM teachers_contact WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    for _ in range(500):
+    for _ in range(1500):
         cursor.execute(
             f'SELECT * FROM teachers_address WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
     print(f'Indexed lookup: {time.time() - then:.2f} seconds')
 
-def string_matching():
+def string_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
@@ -168,7 +168,7 @@ def string_matching():
         cursor.fetchone()
     print(f'String matching test: {time.time() - then:.2f} seconds')
 
-def regex_matching():
+def regex_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
@@ -194,7 +194,53 @@ def regex_matching():
         cursor.fetchone()
     print(f'Regex matching test: {time.time() - then:.2f} seconds')
 
+def derived_queries():
+    connection = pool.get_connection()
+    cursor = connection.cursor()
+    queries = [
+        'SELECT * FROM teachers WHERE salary = (SELECT MAX(salary) FROM teachers);',
+        'SELECT * FROM teachers WHERE salary = (SELECT ROUND(AVG(salary)) FROM teachers);',
+        'SELECT * FROM students WHERE credits = (SELECT MAX(credits) FROM students) LIMIT 200;',
+        'SELECT * FROM students WHERE credits = (SELECT ROUND(AVG(credits)) FROM students) LIMIT 200;'
+    ]
+    then = time.time()
+    for query in queries:
+        cursor.execute(query)
+        cursor.fetchall()
+    print(f'Derived queries test: {time.time() - then:.2f} seconds')
+
+def table_sort_int():
+    connection = pool.get_connection()
+    cursor = connection.cursor()
+    queries = [
+        'SELECT * FROM students ORDER BY credits DESC LIMIT 2000;',
+        'SELECT * FROM teachers ORDER BY salary DESC LIMIT 2000;'
+    ]
+    then = time.time()
+    for query in queries:
+        cursor.execute(query)
+        cursor.fetchall()
+    print(f'Table sort integer test: {time.time() - then:.2f} seconds')
+
+def table_sort_str():
+    connection = pool.get_connection()
+    cursor = connection.cursor()
+    queries = [
+        'SELECT * FROM students ORDER BY first_name DESC LIMIT 2000;',
+        'SELECT * FROM students ORDER BY last_name ASC LIMIT 2000;',
+        'SELECT * FROM teachers ORDER BY last_name DESC LIMIT 2000;',
+        'SELECT * FROM teachers ORDER BY first_name ASC LIMIT 2000;'
+    ]
+    then = time.time()
+    for query in queries:
+        cursor.execute(query)
+        cursor.fetchall()
+    print(f'Table sort string test: {time.time() - then:.2f} seconds')
+
 if __name__ == '__main__':
-    sequential_index()
-    string_matching()
-    regex_matching()
+    index_lookup()
+    string_lookup()
+    regex_lookup()
+    derived_queries()
+    table_sort_int()
+    table_sort_str()

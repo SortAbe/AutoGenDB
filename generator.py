@@ -79,28 +79,40 @@ for row in results:
     last_names.append(row[0])
 
 cursor.execute('SELECT MAX(id) FROM students')
-result = cursor.fetchone()
+result = cursor.fetchone()[0]
 if not result:
-    print('Failed to retrieve stuents max!')
-    exit(1)
+    cursor.execute('SELECT COUNT(*) FROM students')
+    if cursor.fetchone()[0] == 0:
+        students_max = 0
+    else:
+        print('Failed to retrieve stuents max!')
+        exit(1)
 else:
-    students_max = result[0]
+    students_max = result
 
 cursor.execute('SELECT MAX(id) FROM teachers')
-result = cursor.fetchone()
+result = cursor.fetchone()[0]
 if not result:
-    print('Failed to retrieve teachers max!')
-    exit(1)
+    cursor.execute('SELECT COUNT(*) FROM teachers')
+    if cursor.fetchone()[0] == 0:
+        teachers_max = 0
+    else:
+        print('Failed to retrieve teachers max!')
+        exit(1)
 else:
-    teachers_max = result[0]
+    teachers_max = result
 
 cursor.execute('SELECT MAX(class_id) FROM classes')
-result = cursor.fetchone()
+result = cursor.fetchone()[0]
 if not result:
-    print('Failed to retrieve classes max!')
-    exit(1)
+    cursor.execute('SELECT COUNT(*) FROM classes')
+    if cursor.fetchone()[0] == 0:
+        classes_max = 0
+    else:
+        print('Failed to retrieve classes max!')
+        exit(1)
 else:
-    classes_max = result[0]
+    classes_max = result
 connector.close()
 
 def generate_students(thread_id, rows=100_000):

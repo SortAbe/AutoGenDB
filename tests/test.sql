@@ -41,3 +41,17 @@ select * from students where credits = (select max(credits) from students) limit
 select * from students where credits = (select round(avg(credits)) from students) limit 40;
 
 select MAX(salary) from teachers;
+
+select dept_name, count(id) from students group by dept_name;
+
+select state, count(id) from students_address group by state order by count(id) desc;
+
+select dept_name, avg(salary) as "Mean Salary" from teachers group by dept_name order by AVG(salary) desc;
+
+select state, avg(salary) as "Mean Salary" from teachers
+join teachers_address on teachers.id = teachers_address.id
+group by state order by AVG(salary) desc;
+
+
+select * from students order by credits desc limit 2000;
+select * from teachers order by salary desc limit 2000;
