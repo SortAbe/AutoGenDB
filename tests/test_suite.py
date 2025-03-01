@@ -23,8 +23,7 @@ last_names = []
 student_max: int
 teacher_max: int
 classes_max: int
-
-results = {}
+test_results = {}
 
 connector = pool.get_connection()
 cursor = connector.cursor()
@@ -101,98 +100,125 @@ else:
     classes_max = result
 connector.close()
 
+def parameter_variables():
+    cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
+    results = cursor.fetchall()
+    for row in results:
+        test_results[row[0]] = row[1]
+    cursor.execute('SHOW VARIABLES LIKE "max_connections"')
+    test_results['max_connections'] = cursor.fetchone()[1]
+
 def index_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(9000):
+    for _ in range(5000):
         cursor.execute(
             f'SELECT * FROM students WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(9000):
+    for _ in range(5000):
         cursor.execute(
             f'SELECT * FROM students_contact WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(9000):
+    for _ in range(5000):
         cursor.execute(
             f'SELECT * FROM students_address WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(9000):
-        cursor.execute(
-            f'SELECT * FROM students JOIN students_address on students.id = students_address.id JOIN students_contact on students.id = students_contact.id WHERE students.id = {random.randint(0, student_max)};'
-        )
-        cursor.fetchone()
-    for _ in range(1500):
+    for _ in range(5000):
         cursor.execute(
             f'SELECT * FROM teachers WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    for _ in range(1500):
+    for _ in range(5000):
         cursor.execute(
             f'SELECT * FROM teachers_contact WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    for _ in range(1500):
+    for _ in range(5000):
         cursor.execute(
             f'SELECT * FROM teachers_address WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    print(f'Indexed lookup: {time.time() - then:.2f} seconds')
+    total_time = time.time() - then
+    print(f'Indexed lookup: {total_time:.2f} seconds')
+    test_results['index_lookup'] = total_time
+
+def joined_index_lookup():
+    connection = pool.get_connection()
+    cursor = connection.cursor()
+    then = time.time()
+    for _ in range(5000):
+        cursor.execute(
+            f'SELECT * FROM students JOIN students_address on students.id = students_address.id JOIN students_contact on students.id = students_contact.id WHERE students.id = {random.randint(0, student_max)};'
+        )
+        cursor.fetchone()
+    for _ in range(5000):
+        cursor.execute(
+            f'SELECT * FROM teachers JOIN teachers_address on teachers.id = teachers_address.id JOIN teachers_contact on teachers.id = teachers_contact.id WHERE teachers.id = {random.randint(0, teacher_max)};'
+        )
+        cursor.fetchone()
+    total_time = time.time() - then
+    print(f'Joined indexed lookup: {total_time:.2f} seconds')
+    test_results['join_index_lookup'] = total_time
 
 def string_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name LIKE \"{random.choice(male_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name LIKE \"{random.choice(female_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name LIKE \"{random.choice(male_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name LIKE \"{random.choice(female_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    print(f'String matching test: {time.time() - then:.2f} seconds')
+    total_time = time.time() - then
+    print(f'String lookup: {total_time:.2f} seconds')
+    test_results['string_lookup'] = total_time
 
 def regex_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name RLIKE \"{random.choice(male_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name RLIKE \"{random.choice(female_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name RLIKE \"{random.choice(male_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(5):
+    for _ in range(3):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name RLIKE \"{random.choice(female_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    print(f'Regex matching test: {time.time() - then:.2f} seconds')
+    total_time = time.time() - then
+    print(f'Regex lookup: {total_time:.2f} seconds')
+    test_results['regex_lookup'] = total_time
 
 def derived_queries():
     connection = pool.get_connection()
@@ -207,9 +233,11 @@ def derived_queries():
     for query in queries:
         cursor.execute(query)
         cursor.fetchall()
-    print(f'Derived queries test: {time.time() - then:.2f} seconds')
+    total_time = time.time() - then
+    print(f'Derived queries: {total_time:.2f} seconds')
+    test_results['derived_queries'] = total_time
 
-def table_sort_int():
+def integer_sort():
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
@@ -220,9 +248,11 @@ def table_sort_int():
     for query in queries:
         cursor.execute(query)
         cursor.fetchall()
-    print(f'Table sort integer test: {time.time() - then:.2f} seconds')
+    total_time = time.time() - then
+    print(f'Table sort integer: {total_time:.2f} seconds')
+    test_results['integer_sort'] = total_time
 
-def table_sort_str():
+def string_sort():
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
@@ -235,12 +265,40 @@ def table_sort_str():
     for query in queries:
         cursor.execute(query)
         cursor.fetchall()
-    print(f'Table sort string test: {time.time() - then:.2f} seconds')
+    total_time = time.time() - then
+    print(f'Table sort string: {total_time:.2f} seconds')
+    test_results['string_sort'] = total_time
+
+def mass_update():
+    connection = pool.get_connection()
+    cursor = connection.cursor()
+    random_male_name = random.choice(male_names)
+    random_female_name = random.choice(female_names)
+    queries = [
+        f'UPDATE students SET first_name = "Andriw" WHERE first_name = "{random_male_name}"',
+        f'UPDATE students SET first_name = "Arlis" WHERE first_name = "{random_female_name}"',
+        f'UPDATE teachers SET first_name = "Abrahan" WHERE first_name = "{random_male_name}"',
+        f'UPDATE teachers SET first_name = "Ariadny" WHERE first_name = "{random_female_name}"',
+        f'UPDATE students SET first_name = "{random_male_name}" WHERE first_name = "Andriw"',
+        f'UPDATE students SET first_name = "{random_female_name}" WHERE first_name = "Arlis"',
+        f'UPDATE teachers SET first_name = "{random_male_name}" WHERE first_name = "Abrahan"',
+        f'UPDATE teachers SET first_name = "{random_female_name}" WHERE first_name = "Ariadny"'
+       ]
+    then = time.time()
+    for query in queries:
+        cursor.execute(query)
+        connection.commit()
+    total_time = time.time() - then
+    print(f'Update statement: {total_time:.2f} seconds')
+    test_results['update'] = total_time
 
 if __name__ == '__main__':
     index_lookup()
+    joined_index_lookup()
     string_lookup()
     regex_lookup()
     derived_queries()
-    table_sort_int()
-    table_sort_str()
+    integer_sort()
+    string_sort()
+    mass_update()
+    parameter_variables()
