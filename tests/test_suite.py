@@ -1,6 +1,9 @@
 #!/usr/bin/env python3.11
 
+import datetime
+import json
 import random
+import subprocess
 import time
 from mysql.connector import pooling
 
@@ -100,6 +103,7 @@ else:
     classes_max = result
 connector.close()
 
+
 def parameter_variables():
     cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
     results = cursor.fetchall()
@@ -107,6 +111,21 @@ def parameter_variables():
         test_results[row[0]] = row[1]
     cursor.execute('SHOW VARIABLES LIKE "max_connections"')
     test_results['max_connections'] = cursor.fetchone()[1]
+    cursor.execute('SHOW VARIABLES LIKE "wait_timeout"')
+    test_results['wait_timeout'] = cursor.fetchone()[1]
+    cursor.execute('SHOW VARIABLES LIKE "thread_cache_size"')
+    test_results['thread_cache_size'] = cursor.fetchone()[1]
+    cursor.execute('SHOW VARIABLES LIKE "key_buffer_size"')
+    test_results['key_buffer_size'] = cursor.fetchone()[1]
+    cursor.execute('SHOW VARIABLES LIKE "tmp_table_size"')
+    test_results['tmp_table_size'] = cursor.fetchone()[1]
+    try:
+        size = subprocess.check_output(['du', '-s', '/var/lib/mysql'], text=True).split('\t')[0]
+        test_results['var_lib_mysql_size'] = size
+    except subprocess.CalledProcessError as error:
+        print(error)
+    with open(f'test-{datetime.datetime.now().strftime("%G_%m_%d-%H-%m")}.json', 'w') as json_file:
+        json.dump(test_results, json_file, indent=4)
 
 def index_lookup():
     connection = pool.get_connection()
@@ -276,12 +295,8 @@ def mass_update():
     random_female_name = random.choice(female_names)
     queries = [
         f'UPDATE students SET first_name = "Andriw" WHERE first_name = "{random_male_name}"',
-        f'UPDATE students SET first_name = "Arlis" WHERE first_name = "{random_female_name}"',
-        f'UPDATE teachers SET first_name = "Abrahan" WHERE first_name = "{random_male_name}"',
         f'UPDATE teachers SET first_name = "Ariadny" WHERE first_name = "{random_female_name}"',
         f'UPDATE students SET first_name = "{random_male_name}" WHERE first_name = "Andriw"',
-        f'UPDATE students SET first_name = "{random_female_name}" WHERE first_name = "Arlis"',
-        f'UPDATE teachers SET first_name = "{random_male_name}" WHERE first_name = "Abrahan"',
         f'UPDATE teachers SET first_name = "{random_female_name}" WHERE first_name = "Ariadny"'
        ]
     then = time.time()
@@ -292,6 +307,25 @@ def mass_update():
     print(f'Update statement: {total_time:.2f} seconds')
     test_results['update'] = total_time
 
+def math_operations():
+    connection = pool.get_connection()
+    cursor = connection.cursor()
+    queries = [
+        'SELECT SQRT(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
+        'SELECT EXP(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
+        'SELECT SIN(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
+        'SELECT COS(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
+        'SELECT LOG(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
+        'SELECT POW(credits, 3) FROM students ORDER BY credits DESC LIMIT 3000;'
+    ]
+    then = time.time()
+    for query in queries:
+        cursor.execute(query)
+        cursor.fetchall()
+    total_time = time.time() - then
+    print(f'Math operations: {total_time:.2f} seconds')
+    test_results['math_operations'] = total_time
+
 if __name__ == '__main__':
     index_lookup()
     joined_index_lookup()
@@ -301,4 +335,5 @@ if __name__ == '__main__':
     integer_sort()
     string_sort()
     mass_update()
+    math_operations()
     parameter_variables()
