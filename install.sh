@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#python3 -m pip install mysql-connector-python
-
 {
 cat ./sqlfiles/schema.sql
 cat ./sqlfiles/department.sql

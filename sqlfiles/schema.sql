@@ -1,4 +1,4 @@
-CREATE DATABASE university;
+CREATE DATABASE IF NOT EXISTS university;
 
 USE university;
 
