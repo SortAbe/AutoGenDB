@@ -407,17 +407,28 @@ def generate_teaches(thread_id, rows=10_000):
         print(e)
     connector.close()
 
-if __name__ == '__main__':
+def main(threads=16, data=1) -> None:
+    """
+    This functions starts the program.
+    Parameters:
+        threads (int): Number of threads
+        data (int): Amount of data to add in GB
+    Returns:
+        None: nothing is returned
+    """
     then = time.time()
-    with ThreadPoolExecutor(max_workers=16) as executor:
-        for thread in range(16):
-            executor.submit(generate_students, thread, 20_000)
-            executor.submit(generate_teachers, thread, 2_000)
-            executor.submit(generate_classes, thread, 2_000)
+    with ThreadPoolExecutor(max_workers=threads) as executor:
+        for thread in range(threads):
+            executor.submit(generate_students, thread, data * 220_000)
+            executor.submit(generate_teachers, thread, data * 22_000)
+            executor.submit(generate_classes, thread, data * 22_000)
     print(f'Stage one time: {time.time() - then:.2f} seconds')
     then = time.time()
-    with ThreadPoolExecutor(max_workers=16) as executor:
-        for thread in range(16):
-            executor.submit(generate_takes, thread, 20_000)
-            executor.submit(generate_teaches, thread, 2_000)
+    with ThreadPoolExecutor(max_workers=threads) as executor:
+        for thread in range(threads):
+            executor.submit(generate_takes, thread, data * 220_000)
+            executor.submit(generate_teaches, thread, data * 22_000)
     print(f'Stage two time: {time.time() - then:.2f} seconds')
+
+if __name__ == '__main__':
+    main()

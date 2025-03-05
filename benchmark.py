@@ -326,7 +326,7 @@ def math_operations():
     print(f'Math operations: {total_time:.2f} seconds')
     test_results['math_operations'] = total_time
 
-if __name__ == '__main__':
+def main():
     index_lookup()
     joined_index_lookup()
     string_lookup()
@@ -337,3 +337,6 @@ if __name__ == '__main__':
     mass_update()
     math_operations()
     parameter_variables()
+
+if __name__ == '__main__':
+    main()
