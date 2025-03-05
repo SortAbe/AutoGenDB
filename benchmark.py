@@ -28,8 +28,6 @@ teacher_max: int
 classes_max: int
 test_results = {}
 
-connector = pool.get_connection()
-cursor = connector.cursor()
 
 def offset():
     global department_list
@@ -42,6 +40,8 @@ def offset():
     global teacher_max
     global classes_max
     global test_results
+    connector = pool.get_connection()
+    cursor = connector.cursor()
     cursor.execute('SELECT * FROM departments')
     results = cursor.fetchall()
     if not results:
@@ -117,6 +117,8 @@ def offset():
 
 def parameter_variables():
     global test_results
+    connection = pool.get_connection()
+    cursor = connection.cursor()
     cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
     results = cursor.fetchall()
     for row in results:
@@ -138,6 +140,7 @@ def parameter_variables():
         print(error)
     with open(f'test-{datetime.datetime.now().strftime("%G_%m_%d-%H-%m")}.json', 'w') as json_file:
         json.dump(test_results, json_file, indent=4)
+    connection.close()
 
 def index_lookup():
     global student_max

@@ -27,8 +27,6 @@ last_names = []
 students_max: int
 teachers_max: int
 classes_max: int
-connector = pool.get_connection()
-cursor = connector.cursor()
 
 def offset():
     global department_list
@@ -40,6 +38,8 @@ def offset():
     global students_max
     global teachers_max
     global classes_max
+    connector = pool.get_connection()
+    cursor = connector.cursor()
     cursor.execute('SELECT * FROM departments')
     results = cursor.fetchall()
     if not results:
@@ -477,6 +477,7 @@ def main(threads=16, data=1) -> None:
             executor.submit(generate_takes, thread, data * 110_000)
             executor.submit(generate_teaches, thread, data * 11_000)
     print(f'Stage two time: {time.time() - then:.2f} seconds')
+    pool.end()
 
 if __name__ == '__main__':
     main()
