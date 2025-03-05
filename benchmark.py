@@ -9,7 +9,7 @@ from mysql.connector import pooling
 
 pool = pooling.MySQLConnectionPool(
     pool_name='pool',
-    pool_size=32,
+    pool_size=16,
     user='py',
     host='localhost',
     database='university',
@@ -27,6 +27,7 @@ student_max: int
 teacher_max: int
 classes_max: int
 test_results = {}
+
 connector = pool.get_connection()
 cursor = connector.cursor()
 
@@ -115,15 +116,6 @@ def offset():
     connector.close()
 
 def parameter_variables():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
     results = cursor.fetchall()
@@ -148,15 +140,8 @@ def parameter_variables():
         json.dump(test_results, json_file, indent=4)
 
 def index_lookup():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
     global student_max
     global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -194,17 +179,11 @@ def index_lookup():
     total_time = time.time() - then
     print(f'Indexed lookup: {total_time:.2f} seconds')
     test_results['index_lookup'] = total_time
+    connection.close()
 
 def joined_index_lookup():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
     global student_max
     global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -222,17 +201,12 @@ def joined_index_lookup():
     total_time = time.time() - then
     print(f'Joined indexed lookup: {total_time:.2f} seconds')
     test_results['join_index_lookup'] = total_time
+    connection.close()
 
 def string_lookup():
-    global department_list
-    global course_list
-    global address_list
     global female_names
     global male_names
     global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -260,17 +234,12 @@ def string_lookup():
     total_time = time.time() - then
     print(f'String lookup: {total_time:.2f} seconds')
     test_results['string_lookup'] = total_time
+    connection.close()
 
 def regex_lookup():
-    global department_list
-    global course_list
-    global address_list
     global female_names
     global male_names
     global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -298,17 +267,9 @@ def regex_lookup():
     total_time = time.time() - then
     print(f'Regex lookup: {total_time:.2f} seconds')
     test_results['regex_lookup'] = total_time
+    connection.close()
 
 def derived_queries():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -325,17 +286,9 @@ def derived_queries():
     total_time = time.time() - then
     print(f'Derived queries: {total_time:.2f} seconds')
     test_results['derived_queries'] = total_time
+    connection.close()
 
 def integer_sort():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -350,17 +303,9 @@ def integer_sort():
     total_time = time.time() - then
     print(f'Table sort integer: {total_time:.2f} seconds')
     test_results['integer_sort'] = total_time
+    connection.close()
 
 def string_sort():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -377,17 +322,11 @@ def string_sort():
     total_time = time.time() - then
     print(f'Table sort string: {total_time:.2f} seconds')
     test_results['string_sort'] = total_time
+    connection.close()
 
 def mass_update():
-    global department_list
-    global course_list
-    global address_list
     global female_names
     global male_names
-    global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -406,17 +345,9 @@ def mass_update():
     total_time = time.time() - then
     print(f'Update statement: {total_time:.2f} seconds')
     test_results['update'] = total_time
+    connection.close()
 
 def math_operations():
-    global department_list
-    global course_list
-    global address_list
-    global female_names
-    global male_names
-    global last_names
-    global student_max
-    global teacher_max
-    global classes_max
     global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
@@ -435,6 +366,7 @@ def math_operations():
     total_time = time.time() - then
     print(f'Math operations: {total_time:.2f} seconds')
     test_results['math_operations'] = total_time
+    connection.close()
 
 def main():
     offset()

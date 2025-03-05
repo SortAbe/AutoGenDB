@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 pool = pooling.MySQLConnectionPool(
     pool_name='pool',
-    pool_size=32,
+    pool_size=16,
     user='py',
     host='localhost',
     database='university',
@@ -467,15 +467,15 @@ def main(threads=16, data=1) -> None:
     then = time.time()
     with ThreadPoolExecutor(max_workers=threads) as executor:
         for thread in range(threads):
-            executor.submit(generate_students, thread, data * 220_000)
-            executor.submit(generate_teachers, thread, data * 22_000)
-            executor.submit(generate_classes, thread, data * 22_000)
+            executor.submit(generate_students, thread, data * 110_000)
+            executor.submit(generate_teachers, thread, data * 11_000)
+            executor.submit(generate_classes, thread, data * 11_000)
     print(f'Stage one time: {time.time() - then:.2f} seconds')
     then = time.time()
     with ThreadPoolExecutor(max_workers=threads) as executor:
         for thread in range(threads):
-            executor.submit(generate_takes, thread, data * 220_000)
-            executor.submit(generate_teaches, thread, data * 22_000)
+            executor.submit(generate_takes, thread, data * 110_000)
+            executor.submit(generate_teaches, thread, data * 11_000)
     print(f'Stage two time: {time.time() - then:.2f} seconds')
 
 if __name__ == '__main__':
