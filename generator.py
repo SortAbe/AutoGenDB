@@ -31,6 +31,15 @@ connector = pool.get_connection()
 cursor = connector.cursor()
 
 def offset():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global students_max
+    global teachers_max
+    global classes_max
     cursor.execute('SELECT * FROM departments')
     results = cursor.fetchall()
     if not results:
@@ -117,6 +126,13 @@ def offset():
     connector.close()
 
 def generate_students(thread_id, rows=100_000):
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global students_max
     connector = pool.get_connection()
     cursor = connector.cursor()
 
@@ -204,6 +220,13 @@ def generate_students(thread_id, rows=100_000):
     connector.close()
 
 def generate_teachers(thread_id, rows=10_000):
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global teachers_max
     connector = pool.get_connection()
     cursor = connector.cursor()
 
@@ -287,6 +310,13 @@ def generate_teachers(thread_id, rows=10_000):
     connector.close()
 
 def generate_classes(thread_id, rows=10_000):
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global classes_max
     connector = pool.get_connection()
     cursor = connector.cursor()
     cursor.execute(
@@ -327,6 +357,14 @@ def generate_classes(thread_id, rows=10_000):
     connector.close()
 
 def generate_takes(thread_id, rows=100_000):
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global students_max
+    global classes_max
     connector = pool.get_connection()
     cursor = connector.cursor()
     cursor.execute('SELECT MAX(id) FROM students')
@@ -372,6 +410,14 @@ def generate_takes(thread_id, rows=100_000):
     connector.close()
 
 def generate_teaches(thread_id, rows=10_000):
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global teachers_max
+    global classes_max
     connector = pool.get_connection()
     cursor = connector.cursor()
     cursor.execute('SELECT MAX(id) FROM teachers')

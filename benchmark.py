@@ -31,6 +31,16 @@ connector = pool.get_connection()
 cursor = connector.cursor()
 
 def offset():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     cursor.execute('SELECT * FROM departments')
     results = cursor.fetchall()
     if not results:
@@ -105,6 +115,16 @@ def offset():
     connector.close()
 
 def parameter_variables():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
     results = cursor.fetchall()
     for row in results:
@@ -128,6 +148,16 @@ def parameter_variables():
         json.dump(test_results, json_file, indent=4)
 
 def index_lookup():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
@@ -166,6 +196,16 @@ def index_lookup():
     test_results['index_lookup'] = total_time
 
 def joined_index_lookup():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
@@ -184,6 +224,16 @@ def joined_index_lookup():
     test_results['join_index_lookup'] = total_time
 
 def string_lookup():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
@@ -212,6 +262,16 @@ def string_lookup():
     test_results['string_lookup'] = total_time
 
 def regex_lookup():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
@@ -240,6 +300,16 @@ def regex_lookup():
     test_results['regex_lookup'] = total_time
 
 def derived_queries():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
@@ -257,6 +327,16 @@ def derived_queries():
     test_results['derived_queries'] = total_time
 
 def integer_sort():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
@@ -272,6 +352,16 @@ def integer_sort():
     test_results['integer_sort'] = total_time
 
 def string_sort():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
@@ -289,6 +379,16 @@ def string_sort():
     test_results['string_sort'] = total_time
 
 def mass_update():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     random_male_name = random.choice(male_names)
@@ -308,6 +408,16 @@ def mass_update():
     test_results['update'] = total_time
 
 def math_operations():
+    global department_list
+    global course_list
+    global address_list
+    global female_names
+    global male_names
+    global last_names
+    global student_max
+    global teacher_max
+    global classes_max
+    global test_results
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
