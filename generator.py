@@ -30,90 +30,91 @@ classes_max: int
 connector = pool.get_connection()
 cursor = connector.cursor()
 
-cursor.execute('SELECT * FROM departments')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table department!')
-    exit(1)
-for row in results:
-    department_list.append(row[0])
-
-cursor.execute('SELECT * FROM courses')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve tables course!')
-    exit(1)
-for row in results:
-    course_list.append(row)
-
-cursor.execute('SELECT * FROM addresses')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table addresses!')
-    exit(1)
-for row in results:
-    address_list.append(row)
-
-cursor.execute('SELECT * FROM female_names')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table female_names!')
-    exit(1)
-for row in results:
-    female_names.append(row[0])
-
-cursor.execute('SELECT * FROM male_names')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table male_names!')
-    exit(1)
-for row in results:
-    male_names.append(row[0])
-
-cursor.execute('SELECT * FROM last_names')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table last_names!')
-    exit(1)
-for row in results:
-    last_names.append(row[0])
-
-cursor.execute('SELECT MAX(id) FROM students')
-result = cursor.fetchone()[0]
-if not result:
-    cursor.execute('SELECT COUNT(*) FROM students')
-    if cursor.fetchone()[0] == 0:
-        students_max = 0
-    else:
-        print('Failed to retrieve stuents max!')
+def offset():
+    cursor.execute('SELECT * FROM departments')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table department!')
         exit(1)
-else:
-    students_max = result
+    for row in results:
+        department_list.append(row[0])
 
-cursor.execute('SELECT MAX(id) FROM teachers')
-result = cursor.fetchone()[0]
-if not result:
-    cursor.execute('SELECT COUNT(*) FROM teachers')
-    if cursor.fetchone()[0] == 0:
-        teachers_max = 0
-    else:
-        print('Failed to retrieve teachers max!')
+    cursor.execute('SELECT * FROM courses')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve tables course!')
         exit(1)
-else:
-    teachers_max = result
+    for row in results:
+        course_list.append(row)
 
-cursor.execute('SELECT MAX(class_id) FROM classes')
-result = cursor.fetchone()[0]
-if not result:
-    cursor.execute('SELECT COUNT(*) FROM classes')
-    if cursor.fetchone()[0] == 0:
-        classes_max = 0
-    else:
-        print('Failed to retrieve classes max!')
+    cursor.execute('SELECT * FROM addresses')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table addresses!')
         exit(1)
-else:
-    classes_max = result
-connector.close()
+    for row in results:
+        address_list.append(row)
+
+    cursor.execute('SELECT * FROM female_names')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table female_names!')
+        exit(1)
+    for row in results:
+        female_names.append(row[0])
+
+    cursor.execute('SELECT * FROM male_names')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table male_names!')
+        exit(1)
+    for row in results:
+        male_names.append(row[0])
+
+    cursor.execute('SELECT * FROM last_names')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table last_names!')
+        exit(1)
+    for row in results:
+        last_names.append(row[0])
+
+    cursor.execute('SELECT MAX(id) FROM students')
+    result = cursor.fetchone()[0]
+    if not result:
+        cursor.execute('SELECT COUNT(*) FROM students')
+        if cursor.fetchone()[0] == 0:
+            students_max = 0
+        else:
+            print('Failed to retrieve students max!')
+            exit(1)
+    else:
+        students_max = result
+
+    cursor.execute('SELECT MAX(id) FROM teachers')
+    result = cursor.fetchone()[0]
+    if not result:
+        cursor.execute('SELECT COUNT(*) FROM teachers')
+        if cursor.fetchone()[0] == 0:
+            teachers_max = 0
+        else:
+            print('Failed to retrieve teachers max!')
+            exit(1)
+    else:
+        teachers_max = result
+
+    cursor.execute('SELECT MAX(class_id) FROM classes')
+    result = cursor.fetchone()[0]
+    if not result:
+        cursor.execute('SELECT COUNT(*) FROM classes')
+        if cursor.fetchone()[0] == 0:
+            classes_max = 0
+        else:
+            print('Failed to retrieve classes max!')
+            exit(1)
+    else:
+        classes_max = result
+    connector.close()
 
 def generate_students(thread_id, rows=100_000):
     connector = pool.get_connection()
@@ -416,6 +417,7 @@ def main(threads=16, data=1) -> None:
     Returns:
         None: nothing is returned
     """
+    offset()
     then = time.time()
     with ThreadPoolExecutor(max_workers=threads) as executor:
         for thread in range(threads):

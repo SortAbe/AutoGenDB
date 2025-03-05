@@ -27,82 +27,82 @@ student_max: int
 teacher_max: int
 classes_max: int
 test_results = {}
-
 connector = pool.get_connection()
 cursor = connector.cursor()
-cursor.execute('SELECT * FROM departments')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table department!')
-    exit(1)
-for row in results:
-    department_list.append(row[0])
 
-cursor.execute('SELECT * FROM courses')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve tables course!')
-    exit(1)
-for row in results:
-    course_list.append(row)
+def offset():
+    cursor.execute('SELECT * FROM departments')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table department!')
+        exit(1)
+    for row in results:
+        department_list.append(row[0])
 
-cursor.execute('SELECT * FROM addresses')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table addresses!')
-    exit(1)
-for row in results:
-    address_list.append(row)
+    cursor.execute('SELECT * FROM courses')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve tables course!')
+        exit(1)
+    for row in results:
+        course_list.append(row)
 
-cursor.execute('SELECT * FROM female_names')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table female_names!')
-    exit(1)
-for row in results:
-    female_names.append(row[0])
+    cursor.execute('SELECT * FROM addresses')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table addresses!')
+        exit(1)
+    for row in results:
+        address_list.append(row)
 
-cursor.execute('SELECT * FROM male_names')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table male_names!')
-    exit(1)
-for row in results:
-    male_names.append(row[0])
+    cursor.execute('SELECT * FROM female_names')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table female_names!')
+        exit(1)
+    for row in results:
+        female_names.append(row[0])
 
-cursor.execute('SELECT * FROM last_names')
-results = cursor.fetchall()
-if not results:
-    print('Failed to retrieve table last_names!')
-    exit(1)
-for row in results:
-    last_names.append(row[0])
+    cursor.execute('SELECT * FROM male_names')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table male_names!')
+        exit(1)
+    for row in results:
+        male_names.append(row[0])
 
-cursor.execute('SELECT MAX(id) FROM students')
-result = cursor.fetchone()[0]
-if not result:
-    print('Failed to retrieve max from students!')
-    exit(1)
-else:
-    student_max = result
+    cursor.execute('SELECT * FROM last_names')
+    results = cursor.fetchall()
+    if not results:
+        print('Failed to retrieve table last_names!')
+        exit(1)
+    for row in results:
+        last_names.append(row[0])
 
-cursor.execute('SELECT MAX(id) FROM teachers')
-result = cursor.fetchone()[0]
-if not result:
-    print('Failed to retrieve max from tecahers!')
-    exit(1)
-else:
-    teacher_max = result
+    cursor.execute('SELECT MAX(id) FROM students')
+    result = cursor.fetchone()[0]
+    if not result:
+        print('Failed to retrieve max from students!')
+        exit(1)
+    else:
+        student_max = result
 
-cursor.execute('SELECT MAX(class_id) FROM classes')
-result = cursor.fetchone()[0]
-if not result:
-    print('Failed to retrieve max from classes!')
-    exit(1)
-else:
-    classes_max = result
-connector.close()
+    cursor.execute('SELECT MAX(id) FROM teachers')
+    result = cursor.fetchone()[0]
+    if not result:
+        print('Failed to retrieve max from tecahers!')
+        exit(1)
+    else:
+        teacher_max = result
 
+    cursor.execute('SELECT MAX(class_id) FROM classes')
+    result = cursor.fetchone()[0]
+    if not result:
+        print('Failed to retrieve max from classes!')
+        exit(1)
+    else:
+        classes_max = result
+    connector.close()
 
 def parameter_variables():
     cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
@@ -327,6 +327,7 @@ def math_operations():
     test_results['math_operations'] = total_time
 
 def main():
+    offset()
     index_lookup()
     joined_index_lookup()
     string_lookup()

@@ -1,8 +1,12 @@
 USE University;
-TRUNCATE sAddress;
-TRUNCATE sContact;
-TRUNCATE tContact;
-TRUNCATE tAddress;
-DELETE FROM student WHERE true;
-DELETE FROM instructor WHERE true;
+TRUNCATE TABLE teaches;
+TRUNCATE TABLE takes;
+TRUNCATE TABLE teachers_address;
+TRUNCATE TABLE teachers_contact;
+TRUNCATE TABLE students_contact;
+TRUNCATE TABLE students_address;
+DELETE FROM students WHERE TRUE;
+DELETE FROM classes WHERE TRUE;
+DELETE FROM teachers WHERE TRUE;
+PURGE BINARY LOGS BEFORE NOW();
 COMMIT;
