@@ -117,30 +117,20 @@ def offset():
 
 def parameter_variables():
     global test_results
-    connection = pool.get_connection()
-    cursor = connection.cursor()
-    cursor.execute('SHOW VARIABLES LIKE "innodb_%"')
-    results = cursor.fetchall()
-    for row in results:
-        test_results[row[0]] = row[1]
-    cursor.execute('SHOW VARIABLES LIKE "max_connections"')
-    test_results['max_connections'] = cursor.fetchone()[1]
-    cursor.execute('SHOW VARIABLES LIKE "wait_timeout"')
-    test_results['wait_timeout'] = cursor.fetchone()[1]
-    cursor.execute('SHOW VARIABLES LIKE "thread_cache_size"')
-    test_results['thread_cache_size'] = cursor.fetchone()[1]
-    cursor.execute('SHOW VARIABLES LIKE "key_buffer_size"')
-    test_results['key_buffer_size'] = cursor.fetchone()[1]
-    cursor.execute('SHOW VARIABLES LIKE "tmp_table_size"')
-    test_results['tmp_table_size'] = cursor.fetchone()[1]
     try:
         size = subprocess.check_output(['du', '-s', '/var/lib/mysql'], text=True).split('\t')[0]
         test_results['var_lib_mysql_size'] = size
     except subprocess.CalledProcessError as error:
         print(error)
-    with open(f'test-{datetime.datetime.now().strftime("%G_%m_%d-%H-%m")}.json', 'w') as json_file:
-        json.dump(test_results, json_file, indent=4)
-    connection.close()
+    try:
+        with open('results.json', 'r') as json_file:
+            result_list = json.load(json_file)
+    except FileNotFoundError as error:
+        result_list = {}
+        result_list['results'] = []
+    result_list['results'].append(test_results)
+    with open('results.json', 'w') as json_file:
+        json.dump(result_list, json_file, indent=4)
 
 def index_lookup():
     global student_max
@@ -149,32 +139,32 @@ def index_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM students WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM students_contact WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM students_address WHERE id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM teachers WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM teachers_contact WHERE id = {random.randint(0, teacher_max)};'
         )
         cursor.fetchone()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM teachers_address WHERE id = {random.randint(0, teacher_max)};'
         )
@@ -191,12 +181,12 @@ def joined_index_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM students JOIN students_address on students.id = students_address.id JOIN students_contact on students.id = students_contact.id WHERE students.id = {random.randint(0, student_max)};'
         )
         cursor.fetchone()
-    for _ in range(5000):
+    for _ in range(2000):
         cursor.execute(
             f'SELECT * FROM teachers JOIN teachers_address on teachers.id = teachers_address.id JOIN teachers_contact on teachers.id = teachers_contact.id WHERE teachers.id = {random.randint(0, teacher_max)};'
         )
@@ -214,22 +204,22 @@ def string_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name LIKE \"{random.choice(male_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name LIKE \"{random.choice(female_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name LIKE \"{random.choice(male_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name LIKE \"{random.choice(female_names)}\" AND last_name LIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
@@ -247,22 +237,22 @@ def regex_lookup():
     connection = pool.get_connection()
     cursor = connection.cursor()
     then = time.time()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name RLIKE \"{random.choice(male_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM students WHERE first_name RLIKE \"{random.choice(female_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name RLIKE \"{random.choice(male_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
         cursor.fetchone()
-    for _ in range(3):
+    for _ in range(2):
         cursor.execute(
             f'SELECT * FROM teachers WHERE first_name RLIKE \"{random.choice(female_names)}\" AND last_name RLIKE \"{random.choice(last_names)}\" LIMIT 1;'
         )
@@ -296,8 +286,8 @@ def integer_sort():
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
-        'SELECT * FROM students ORDER BY credits DESC LIMIT 2000;',
-        'SELECT * FROM teachers ORDER BY salary DESC LIMIT 2000;'
+        'SELECT * FROM students ORDER BY credits DESC LIMIT 1000;',
+        'SELECT * FROM teachers ORDER BY salary DESC LIMIT 1000;'
     ]
     then = time.time()
     for query in queries:
@@ -313,10 +303,10 @@ def string_sort():
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
-        'SELECT * FROM students ORDER BY first_name DESC LIMIT 2000;',
-        'SELECT * FROM students ORDER BY last_name ASC LIMIT 2000;',
-        'SELECT * FROM teachers ORDER BY last_name DESC LIMIT 2000;',
-        'SELECT * FROM teachers ORDER BY first_name ASC LIMIT 2000;'
+        'SELECT * FROM students ORDER BY first_name DESC LIMIT 1000;',
+        'SELECT * FROM students ORDER BY last_name ASC LIMIT 1000;',
+        'SELECT * FROM teachers ORDER BY last_name DESC LIMIT 1000;',
+        'SELECT * FROM teachers ORDER BY first_name ASC LIMIT 1000;'
     ]
     then = time.time()
     for query in queries:
@@ -337,8 +327,6 @@ def mass_update():
     random_female_name = random.choice(female_names)
     queries = [
         f'UPDATE students SET first_name = "Andriw" WHERE first_name = "{random_male_name}"',
-        f'UPDATE teachers SET first_name = "Ariadny" WHERE first_name = "{random_female_name}"',
-        f'UPDATE students SET first_name = "{random_male_name}" WHERE first_name = "Andriw"',
         f'UPDATE teachers SET first_name = "{random_female_name}" WHERE first_name = "Ariadny"'
        ]
     then = time.time()
@@ -355,12 +343,12 @@ def math_operations():
     connection = pool.get_connection()
     cursor = connection.cursor()
     queries = [
-        'SELECT SQRT(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
-        'SELECT EXP(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
-        'SELECT SIN(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
-        'SELECT COS(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
-        'SELECT LOG(credits) FROM students ORDER BY credits DESC LIMIT 3000;',
-        'SELECT POW(credits, 3) FROM students ORDER BY credits DESC LIMIT 3000;'
+        'SELECT SQRT(credits) FROM students ORDER BY credits DESC LIMIT 1500;',
+        'SELECT EXP(credits) FROM students ORDER BY credits DESC LIMIT 1500;',
+        'SELECT SIN(credits) FROM students ORDER BY credits DESC LIMIT 1500;',
+        'SELECT COS(credits) FROM students ORDER BY credits DESC LIMIT 1500;',
+        'SELECT LOG(credits) FROM students ORDER BY credits DESC LIMIT 1500;',
+        'SELECT POW(credits, 3) FROM students ORDER BY credits DESC LIMIT 1500;'
     ]
     then = time.time()
     for query in queries:
