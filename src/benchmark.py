@@ -1,6 +1,5 @@
 #!/usr/bin/env python3.11
 
-import datetime
 import json
 import random
 import subprocess
