@@ -117,7 +117,7 @@ def offset():
 def parameter_variables():
     global test_results
     try:
-        size = subprocess.check_output(['du', '-s', '/var/lib/mysql'], text=True).split('\t')[0]
+        size = subprocess.check_output(['du', '-s', '/var/lib/mysql/university'], text=True).split('\t')[0]
         test_results['var_lib_mysql_size'] = size
     except subprocess.CalledProcessError as error:
         print(error)
